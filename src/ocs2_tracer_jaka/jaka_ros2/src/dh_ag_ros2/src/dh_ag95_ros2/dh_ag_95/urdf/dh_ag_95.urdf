@@ -1,0 +1,849 @@
+<?xml version="1.0"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="dh_ag_95"> 
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.00022814 0.00015573 0.053456"
+        rpy="0 0 0" />
+      <mass
+        value="0.39892" />
+      <inertia
+        ixx="0.00032962"
+        ixy="1.7998E-07"
+        ixz="-1.1426E-06"
+        iyy="0.00050592"
+        iyz="-1.8732E-07"
+        izz="0.00025818" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.77647 0.75686 0.73725 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="R1_1_link">
+    <inertial>
+      <origin
+        xyz="0.0225968468429493 0.0198500598869848 0.0242587750907946"
+        rpy="0 0 0" />
+      <mass
+        value="0.0291379998368981" />
+      <inertia
+        ixx="1.02388917540463E-05"
+        ixy="-1.44899147994263E-11"
+        ixz="-2.77992390909763E-06"
+        iyy="5.95906724378469E-06"
+        iyz="4.68307283448097E-12"
+        izz="1.02921693839471E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/R1_1_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/R1_1_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="R1_1_joint"
+    type="revolute">
+    <origin
+      xyz="0.016 -0.01985 0.10586"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="R1_1_link" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-0.94"
+      upper="0"
+      effort="1"
+      velocity="1" />
+  </joint>
+  <link
+    name="R1_2_link">
+    <inertial>
+      <origin
+        xyz="0.0019102 0.0087499 0.012289"
+        rpy="0 0 0" />
+      <mass
+        value="0.025733" />
+      <inertia
+        ixx="2.3006E-06"
+        ixy="3.5018E-12"
+        ixz="3.2736E-07"
+        iyy="2.2915E-06"
+        iyz="-5.0264E-12"
+        izz="1.5949E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/R1_2_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.62745 0.62745 0.62745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/R1_2_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="R1_2_joint"
+    type="revolute">
+    <origin
+      xyz="0.039 0.0111 0.038781"
+      rpy="0 0 0" />
+    <parent
+      link="R1_1_link" />
+    <child
+      link="R1_2_link" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="1"
+      velocity="1" />
+    <mimic
+      joint="R1_1_joint"
+      multiplier="1"
+      offset="0" />
+  </joint>
+  <link
+    name="R2_1_link">
+    <inertial>
+      <origin
+        xyz="0.023891 0.0025003 0.023744"
+        rpy="0 0 0" />
+      <mass
+        value="0.016485" />
+      <inertia
+        ixx="1.3639E-06"
+        ixy="-2.7312E-10"
+        ixz="-1.0272E-06"
+        iyy="2.3531E-06"
+        iyz="-1.3532E-10"
+        izz="1.3805E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/R2_1_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/R2_1_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="R2_1_joint"
+    type="revolute">
+    <origin
+      xyz="0.036673 -0.0025 0.098336"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="R2_1_link" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="1"
+      velocity="1" />
+    <mimic
+      joint="R1_1_joint"
+      multiplier="1"
+      offset="0" />
+  </joint>
+  <link
+    name="M_link">
+    <inertial>
+      <origin
+        xyz="-3.89667330027227E-08 -1.97843892441297E-09 0.00552446120644829"
+        rpy="0 0 0" />
+      <mass
+        value="0.0424523662059911" />
+      <inertia
+        ixx="9.09097977652427E-06"
+        ixy="-2.7372247152165E-12"
+        ixz="1.36648262644016E-11"
+        iyy="1.74860571981802E-05"
+        iyz="1.46116128655314E-12"
+        izz="1.77055230390905E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/M_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/M_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="M_joint"
+    type="prismatic">
+    <origin
+      xyz="0 0 0.055898"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="M_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0.03"
+      effort="140"
+      velocity="0.1" />
+    <mimic
+      joint="R1_1_joint"
+      multiplier="-0.032"
+      offset="0" />
+  </joint>
+  <link
+    name="MR_link">
+    <inertial>
+      <origin
+        xyz="0.0194173452606911 0.00500020821658692 0.0198267983610868"
+        rpy="0 0 0" />
+      <mass
+        value="0.0225325602003198" />
+      <inertia
+        ixx="3.16047075505568E-06"
+        ixy="-7.57314101217962E-11"
+        ixz="-1.04704448862344E-06"
+        iyy="2.74564580074735E-06"
+        iyz="-3.16503409342751E-10"
+        izz="2.62341354302338E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/MR_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/MR_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="MR_joint"
+    type="revolute">
+    <origin
+      xyz="0.0213500000000003 -0.00499999999999999 -0.00153999999999942"
+      rpy="0 0 0" />
+    <parent
+      link="M_link" />
+    <child
+      link="MR_link" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="1"
+      velocity="1" />
+    <mimic
+      joint="R1_1_joint"
+      multiplier="0.37"
+      offset="0" />
+  </joint>
+  <link
+    name="MR_1_1_link">
+    <inertial>
+      <origin
+        xyz="-0.0147446718306515 0.0198500045165122 0.00965707418159932"
+        rpy="0 0 0" />
+      <mass
+        value="0.00395410470045583" />
+      <inertia
+        ixx="1.38144411776877E-06"
+        ixy="-5.93607230953626E-14"
+        ixz="2.9645454534427E-07"
+        iyy="6.83893499321837E-07"
+        iyz="9.08967880322211E-14"
+        izz="1.53864859987641E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/MR_1_1_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.203921568627451 0.203921568627451 0.203921568627451 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/MR_1_1_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="MR_1_1_joint"
+    type="revolute">
+    <origin
+      xyz="0.024053501873876 -0.01485 0.0290426091734764"
+      rpy="0 0 0" />
+    <parent
+      link="MR_link" />
+    <child
+      link="MR_1_1_link" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="1"
+      velocity="1" />
+    <mimic
+      joint="R1_1_joint"
+      multiplier="1"
+      offset="0" />
+  </joint>
+  <link
+    name="MR_2_1_link">
+    <inertial>
+      <origin
+        xyz="0.012281548360738 0.0143000663608493 0.0298476337673758"
+        rpy="0 0 0" />
+      <mass
+        value="0.0260748936131531" />
+      <inertia
+        ixx="8.7747461984629E-06"
+        ixy="-1.46657474441649E-11"
+        ixz="-2.10326485419844E-06"
+        iyy="6.99151934278109E-06"
+        iyz="4.48522735026558E-12"
+        izz="3.60070244558606E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/MR_2_1_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/MR_2_1_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="MR_2_1_joint"
+    type="revolute">
+    <origin
+      xyz="0.024053501873875 -0.0093 0.0290426091734785"
+      rpy="0 0 0" />
+    <parent
+      link="MR_link" />
+    <child
+      link="MR_2_1_link" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="1"
+      velocity="1" />
+    <mimic
+      joint="R1_1_joint"
+      multiplier="1.38"
+      offset="0" />
+  </joint>
+  <link
+    name="ML_link">
+    <inertial>
+      <origin
+        xyz="0.0194202112199351 -0.00500020811350815 0.0198267983610869"
+        rpy="0 0 0" />
+      <mass
+        value="0.0225325602003199" />
+      <inertia
+        ixx="3.16047075505575E-06"
+        ixy="-7.57314101215952E-11"
+        ixz="-1.04706359322326E-06"
+        iyy="2.74564580074735E-06"
+        iyz="3.16488361082825E-10"
+        izz="2.62341354302332E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/ML_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/ML_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ML_joint"
+    type="revolute">
+    <origin
+      xyz="-0.0213500000000005 -0.00500000000000303 -0.00153999999999894"
+      rpy="0 0 3.14159265358979" />
+    <parent
+      link="M_link" />
+    <child
+      link="ML_link" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="1"
+      velocity="1" />
+    <mimic
+      joint="R1_1_joint"
+      multiplier="0.37"
+      offset="0" />
+  </joint>
+  <link
+    name="ML_1_1_link">
+    <inertial>
+      <origin
+        xyz="-0.014744671830652 -0.0198499954834878 0.00965707418159832"
+        rpy="0 0 0" />
+      <mass
+        value="0.00395410470045582" />
+      <inertia
+        ixx="1.38144411776874E-06"
+        ixy="-5.93607233750099E-14"
+        ixz="2.96454545344262E-07"
+        iyy="6.83893499321836E-07"
+        iyz="9.08967882997114E-14"
+        izz="1.53864859987644E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/ML_1_1_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.203921568627451 0.203921568627451 0.203921568627451 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/ML_1_1_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ML_1_1_joint"
+    type="revolute">
+    <origin
+      xyz="0.0240535018738747 0.01485 0.0290426091734785"
+      rpy="0 0 0" />
+    <parent
+      link="ML_link" />
+    <child
+      link="ML_1_1_link" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="1"
+      velocity="1" />
+    <mimic
+      joint="R1_1_joint"
+      multiplier="1.05"
+      offset="0" />
+  </joint>
+  <link
+    name="ML_2_1_link">
+    <inertial>
+      <origin
+        xyz="0.0122817499134019 -0.014300066452912 0.0298476328339199"
+        rpy="0 0 0" />
+      <mass
+        value="0.026074893613153" />
+      <inertia
+        ixx="8.77474567586372E-06"
+        ixy="-1.47068931413486E-11"
+        ixz="-2.10332123636992E-06"
+        iyy="6.99151934278108E-06"
+        iyz="-4.38411835321485E-12"
+        izz="3.60070296818523E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/ML_2_1_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/ML_2_1_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ML_2_1_joint"
+    type="revolute">
+    <origin
+      xyz="0.0240535018738754 0.00929999999999696 0.0290426091734789"
+      rpy="0 0 0" />
+    <parent
+      link="ML_link" />
+    <child
+      link="ML_2_1_link" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="1"
+      velocity="1" />
+    <mimic
+      joint="R1_1_joint"
+      multiplier="1.38"
+      offset="0" />
+  </joint>
+  <link
+    name="L1_1_link">
+    <inertial>
+      <origin
+        xyz="0.0225970321651572 -0.0198500589648507 0.0242587750943531"
+        rpy="0 0 0" />
+      <mass
+        value="0.0291379998368981" />
+      <inertia
+        ixx="1.02388917549221E-05"
+        ixy="-1.44899147993066E-11"
+        ixz="-2.77997995678956E-06"
+        iyy="5.95906724378469E-06"
+        iyz="-4.32120999036192E-12"
+        izz="1.02921693830713E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/L1_1_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/L1_1_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="L1_1_joint"
+    type="revolute">
+    <origin
+      xyz="-0.016 -0.01985 0.10586"
+      rpy="0 0 3.1416" />
+    <parent
+      link="base_link" />
+    <child
+      link="L1_1_link" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="1"
+      velocity="1" />
+    <mimic
+      joint="R1_1_joint"
+      multiplier="1"
+      offset="0" />
+  </joint>
+  <link
+    name="L1_2_link">
+    <inertial>
+      <origin
+        xyz="0.0019102 -0.0087501 0.012289"
+        rpy="0 0 0" />
+      <mass
+        value="0.025733" />
+      <inertia
+        ixx="2.3006E-06"
+        ixy="3.5018E-12"
+        ixz="3.2736E-07"
+        iyy="2.2915E-06"
+        iyz="-5.0264E-12"
+        izz="1.5949E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/L1_2_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/L1_2_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="L1_2_joint"
+    type="revolute">
+    <origin
+      xyz="0.039 -0.0111 0.038781"
+      rpy="0 0 0" />
+    <parent
+      link="L1_1_link" />
+    <child
+      link="L1_2_link" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="1"
+      velocity="1" />
+    <mimic
+      joint="R1_1_joint"
+      multiplier="1"
+      offset="0" />
+  </joint>
+  <link
+    name="L2_1_link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/L2_1_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dh_ag_95/meshes/visual/L2_1_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="L2_1_joint"
+    type="revolute">
+    <origin
+      xyz="-0.036673 -0.0025 0.098336"
+      rpy="0 0 3.1416" />
+    <parent
+      link="base_link" />
+    <child
+      link="L2_1_link" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="1"
+      velocity="1" />
+    <mimic
+      joint="R1_1_joint"
+      multiplier="-1"
+      offset="0" />
+  </joint>
+</robot>

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>jaka_driver</name>
+  <version>0.0.0</version>
+  <description>JAKA Zu robot driver and joystick-to-Servo bridge.</description>
+  <maintainer email="490754775@qq.com">ras</maintainer>
+  <license>TODO: License declaration</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- 原有依赖 -->
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+
+  <!-- JAKA 驱动节点需要 -->
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf2</depend>
+
+  <!-- Joy -> Servo 组件需要 -->
+  <depend>rclcpp_components</depend>
+  <depend>control_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>moveit_msgs</depend>
+  
+
+  <depend>dh_gripper_driver</depend>
+
+
+  <!-- 运行时（启动 joy_node、servo_node_main 时用到，建议加上） -->
+  <exec_depend>joy</exec_depend>
+  <exec_depend>moveit_servo</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

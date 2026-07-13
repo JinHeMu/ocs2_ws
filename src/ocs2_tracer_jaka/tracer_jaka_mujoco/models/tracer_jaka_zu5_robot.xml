@@ -1,0 +1,588 @@
+<mujoco model="tracer_jaka_zu5">
+  <compiler angle="radian" meshdir="/home/a/mujoco_sim/tracer_jaka_zu5/tracer_jaka_zu5_mjcf/tracer_jaka_zu5/meshes" />
+  <asset>
+    <mesh name="tracer_base_link_no_wheel_mesh" file="tracer_base_link_no_wheel_mesh.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh003" file="tracer_base_link_no_wheel_mesh003.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh045" file="tracer_base_link_no_wheel_mesh045.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh044" file="tracer_base_link_no_wheel_mesh044.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh042" file="tracer_base_link_no_wheel_mesh042.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh041" file="tracer_base_link_no_wheel_mesh041.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh046" file="tracer_base_link_no_wheel_mesh046.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh031" file="tracer_base_link_no_wheel_mesh031.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh048" file="tracer_base_link_no_wheel_mesh048.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh049" file="tracer_base_link_no_wheel_mesh049.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh050" file="tracer_base_link_no_wheel_mesh050.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh053" file="tracer_base_link_no_wheel_mesh053.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh051" file="tracer_base_link_no_wheel_mesh051.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh054" file="tracer_base_link_no_wheel_mesh054.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh052" file="tracer_base_link_no_wheel_mesh052.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh057" file="tracer_base_link_no_wheel_mesh057.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh058" file="tracer_base_link_no_wheel_mesh058.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh061" file="tracer_base_link_no_wheel_mesh061.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh059" file="tracer_base_link_no_wheel_mesh059.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh060" file="tracer_base_link_no_wheel_mesh060.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh055" file="tracer_base_link_no_wheel_mesh055.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh056" file="tracer_base_link_no_wheel_mesh056.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh040" file="tracer_base_link_no_wheel_mesh040.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh039" file="tracer_base_link_no_wheel_mesh039.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh038" file="tracer_base_link_no_wheel_mesh038.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh037" file="tracer_base_link_no_wheel_mesh037.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh006" file="tracer_base_link_no_wheel_mesh006.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh007" file="tracer_base_link_no_wheel_mesh007.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh011" file="tracer_base_link_no_wheel_mesh011.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh005" file="tracer_base_link_no_wheel_mesh005.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh004" file="tracer_base_link_no_wheel_mesh004.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh001" file="tracer_base_link_no_wheel_mesh001.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh008" file="tracer_base_link_no_wheel_mesh008.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh099" file="tracer_base_link_no_wheel_mesh099.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh100" file="tracer_base_link_no_wheel_mesh100.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh096" file="tracer_base_link_no_wheel_mesh096.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh097" file="tracer_base_link_no_wheel_mesh097.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh095" file="tracer_base_link_no_wheel_mesh095.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh091" file="tracer_base_link_no_wheel_mesh091.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh098" file="tracer_base_link_no_wheel_mesh098.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh103" file="tracer_base_link_no_wheel_mesh103.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh102" file="tracer_base_link_no_wheel_mesh102.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh104" file="tracer_base_link_no_wheel_mesh104.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh101" file="tracer_base_link_no_wheel_mesh101.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh105" file="tracer_base_link_no_wheel_mesh105.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh107" file="tracer_base_link_no_wheel_mesh107.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh106" file="tracer_base_link_no_wheel_mesh106.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh108" file="tracer_base_link_no_wheel_mesh108.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh110" file="tracer_base_link_no_wheel_mesh110.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh109" file="tracer_base_link_no_wheel_mesh109.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh112" file="tracer_base_link_no_wheel_mesh112.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh111" file="tracer_base_link_no_wheel_mesh111.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh114" file="tracer_base_link_no_wheel_mesh114.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh115" file="tracer_base_link_no_wheel_mesh115.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh113" file="tracer_base_link_no_wheel_mesh113.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh092" file="tracer_base_link_no_wheel_mesh092.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh116" file="tracer_base_link_no_wheel_mesh116.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh002" file="tracer_base_link_no_wheel_mesh002.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh016" file="tracer_base_link_no_wheel_mesh016.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh015" file="tracer_base_link_no_wheel_mesh015.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh017" file="tracer_base_link_no_wheel_mesh017.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh018" file="tracer_base_link_no_wheel_mesh018.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh023" file="tracer_base_link_no_wheel_mesh023.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh020" file="tracer_base_link_no_wheel_mesh020.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh019" file="tracer_base_link_no_wheel_mesh019.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh022" file="tracer_base_link_no_wheel_mesh022.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh026" file="tracer_base_link_no_wheel_mesh026.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh021" file="tracer_base_link_no_wheel_mesh021.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh010" file="tracer_base_link_no_wheel_mesh010.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh014" file="tracer_base_link_no_wheel_mesh014.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh013" file="tracer_base_link_no_wheel_mesh013.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh012" file="tracer_base_link_no_wheel_mesh012.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh025" file="tracer_base_link_no_wheel_mesh025.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh029" file="tracer_base_link_no_wheel_mesh029.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh028" file="tracer_base_link_no_wheel_mesh028.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh027" file="tracer_base_link_no_wheel_mesh027.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh030" file="tracer_base_link_no_wheel_mesh030.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh024" file="tracer_base_link_no_wheel_mesh024.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh036" file="tracer_base_link_no_wheel_mesh036.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh034" file="tracer_base_link_no_wheel_mesh034.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh035" file="tracer_base_link_no_wheel_mesh035.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh033" file="tracer_base_link_no_wheel_mesh033.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh047" file="tracer_base_link_no_wheel_mesh047.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh043" file="tracer_base_link_no_wheel_mesh043.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh032" file="tracer_base_link_no_wheel_mesh032.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh009" file="tracer_base_link_no_wheel_mesh009.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh062" file="tracer_base_link_no_wheel_mesh062.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh063" file="tracer_base_link_no_wheel_mesh063.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh064" file="tracer_base_link_no_wheel_mesh064.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh066" file="tracer_base_link_no_wheel_mesh066.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh065" file="tracer_base_link_no_wheel_mesh065.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh067" file="tracer_base_link_no_wheel_mesh067.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh083" file="tracer_base_link_no_wheel_mesh083.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh084" file="tracer_base_link_no_wheel_mesh084.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh086" file="tracer_base_link_no_wheel_mesh086.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh087" file="tracer_base_link_no_wheel_mesh087.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh082" file="tracer_base_link_no_wheel_mesh082.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh088" file="tracer_base_link_no_wheel_mesh088.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh089" file="tracer_base_link_no_wheel_mesh089.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh090" file="tracer_base_link_no_wheel_mesh090.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh085" file="tracer_base_link_no_wheel_mesh085.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh094" file="tracer_base_link_no_wheel_mesh094.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh093" file="tracer_base_link_no_wheel_mesh093.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh068" file="tracer_base_link_no_wheel_mesh068.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh070" file="tracer_base_link_no_wheel_mesh070.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh072" file="tracer_base_link_no_wheel_mesh072.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh069" file="tracer_base_link_no_wheel_mesh069.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh074" file="tracer_base_link_no_wheel_mesh074.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh071" file="tracer_base_link_no_wheel_mesh071.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh075" file="tracer_base_link_no_wheel_mesh075.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh073" file="tracer_base_link_no_wheel_mesh073.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh078" file="tracer_base_link_no_wheel_mesh078.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh076" file="tracer_base_link_no_wheel_mesh076.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh077" file="tracer_base_link_no_wheel_mesh077.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh081" file="tracer_base_link_no_wheel_mesh081.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh079" file="tracer_base_link_no_wheel_mesh079.obj" />
+    <mesh name="tracer_base_link_no_wheel_mesh080" file="tracer_base_link_no_wheel_mesh080.obj" />
+    <mesh name="tracer_wheel" file="tracer_wheel.obj" />
+    <mesh name="castor_joint" file="castor_joint.obj" />
+    <mesh name="castor" file="castor.obj" />
+    <mesh name="aluminium_base_link" file="aluminium_base_link.STL" />
+    <mesh name="urbase_base_link" file="urbase_base_link.STL" />
+    <mesh name="Link_0" file="Link_0.STL" />
+    <mesh name="Link_1" file="Link_1.STL" />
+    <mesh name="Link_2" file="Link_2.STL" />
+    <mesh name="Link_3" file="Link_3.STL" />
+    <mesh name="Link_4" file="Link_4.STL" />
+    <mesh name="Link_5" file="Link_5.STL" />
+    <mesh name="Link_6" file="Link_6.STL" />
+    <mesh name="jk_se_vi_200_link" file="jk_se_vi_200_link.stl" scale="0.001 0.001 0.001" />
+    <mesh name="tool0" file="tool0.STL" scale="0.001 0.001 0.001" />
+    <mesh name="realsense_d435" file="realsense_d435.stl" />
+    <material name="right_wheel_link_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="left_wheel_link_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="fl_castor_link_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="fl_wheel_link_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="fr_castor_link_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="fr_wheel_link_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="rr_castor_link_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="rr_wheel_link_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="rl_castor_link_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="rl_wheel_link_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="aluminium_base_link_mat" rgba="0.8941 0.9137 0.9255 1" specular="0" />
+    <material name="aluminium_2_base_link_mat" rgba="0.8941 0.9137 0.9255 1" specular="0" />
+    <material name="aluminium_3_base_link_mat" rgba="0.8941 0.9137 0.9255 1" specular="0" />
+    <material name="aluminium_4_base_link_mat" rgba="0.8941 0.9137 0.9255 1" specular="0" />
+    <material name="urbase_base_link_mat" rgba="1 1 1 1" specular="0" />
+    <material name="Link_0_mat" rgba="0.8471 0.8471 0.8471 1" specular="0" />
+    <material name="Link_1_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="Link_2_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="Link_3_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="Link_4_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="Link_5_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="Link_6_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="jk_se_vi_200_link_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="tool0_and_camera_link_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="d435i_link_mat" rgba="0.502 0.502 0.502 1" specular="0" />
+    <material name="base_link_mat_1" rgba="0 1 1 1" specular="0" />
+    <material name="base_link_mat_2" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_3" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_4" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_5" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_6" rgba="1 1 1 1" specular="0" />
+    <material name="base_link_mat_7" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_8" rgba="0.8 0.8 0.8 1" specular="0" />
+    <material name="base_link_mat_9" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_10" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_11" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_12" rgba="0.8 0.8 0.8 1" specular="0" />
+    <material name="base_link_mat_13" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_14" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_15" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_16" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_17" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_18" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_19" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_20" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_21" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_22" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_23" rgba="0.251 0.2549 0.2588 1" specular="0" />
+    <material name="base_link_mat_24" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_25" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_26" rgba="0 0 0 1" specular="0" />
+    <material name="base_link_mat_27" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_28" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_29" rgba="0.2 0.2039 0.2078 1" specular="0" />
+    <material name="base_link_mat_30" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_31" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_32" rgba="0 1 1 1" specular="0" />
+    <material name="base_link_mat_33" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_34" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_35" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_36" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_37" rgba="0.4118 0.4118 0.4118 1" specular="0" />
+    <material name="base_link_mat_38" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_39" rgba="0.8 0.8 0.8 1" specular="0" />
+    <material name="base_link_mat_40" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_41" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_42" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_43" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_44" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_45" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_46" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_47" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_48" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_49" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_50" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_51" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_52" rgba="0.698 0.698 0.698 1" specular="0" />
+    <material name="base_link_mat_53" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_54" rgba="0.698 0.698 0.698 1" specular="0" />
+    <material name="base_link_mat_55" rgba="0.698 0.698 0.698 1" specular="0" />
+    <material name="base_link_mat_56" rgba="0.749 0.749 0.749 1" specular="0" />
+    <material name="base_link_mat_57" rgba="0.698 0.698 0.698 1" specular="0" />
+    <material name="base_link_mat_58" rgba="0.8 0.8 0.8 1" specular="0" />
+    <material name="base_link_mat_59" rgba="0.898 0.9176 0.9294 1" specular="0" />
+    <material name="base_link_mat_60" rgba="0.898 0.9176 0.9294 1" specular="0" />
+    <material name="base_link_mat_61" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_62" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_63" rgba="1 1 1 1" specular="0" />
+    <material name="base_link_mat_64" rgba="1 1 1 1" specular="0" />
+    <material name="base_link_mat_65" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_66" rgba="0.898 0.9176 0.9294 1" specular="0" />
+    <material name="base_link_mat_67" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_68" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_69" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_70" rgba="0.298 0.298 0.298 1" specular="0" />
+    <material name="base_link_mat_71" rgba="0.1137 0.1137 0.1137 1" specular="0" />
+    <material name="base_link_mat_72" rgba="1 1 1 1" specular="0" />
+    <material name="base_link_mat_73" rgba="0.898 0.9176 0.9294 1" specular="0" />
+    <material name="base_link_mat_74" rgba="0.2196 0.2235 0.2275 1" specular="0" />
+    <material name="base_link_mat_75" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_76" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_77" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_78" rgba="0 0 0 1" specular="0" />
+    <material name="base_link_mat_79" rgba="0 0 0 1" specular="0" />
+    <material name="base_link_mat_80" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_81" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_82" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_83" rgba="0.298 0.298 0.298 1" specular="0" />
+    <material name="base_link_mat_84" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_85" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_86" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_87" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_88" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_89" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_90" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_91" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_92" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_93" rgba="1 1 1 1" specular="0" />
+    <material name="base_link_mat_94" rgba="0.5294 0.549 0.549 1" specular="0" />
+    <material name="base_link_mat_95" rgba="0.698 0.698 0.698 1" specular="0" />
+    <material name="base_link_mat_96" rgba="0 1 1 1" specular="0" />
+    <material name="base_link_mat_97" rgba="1 1 1 1" specular="0" />
+    <material name="base_link_mat_98" rgba="0.698 0.698 0.698 1" specular="0" />
+    <material name="base_link_mat_99" rgba="0.898 0.9176 0.9294 1" specular="0" />
+    <material name="base_link_mat_100" rgba="1 1 1 1" specular="0" />
+    <material name="base_link_mat_101" rgba="1 1 1 1" specular="0" />
+    <material name="base_link_mat_102" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_103" rgba="0.698 0.698 0.698 1" specular="0" />
+    <material name="base_link_mat_104" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_105" rgba="1 1 1 1" specular="0" />
+    <material name="base_link_mat_106" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_107" rgba="0.7765 0.7569 0.7373 1" specular="0" />
+    <material name="base_link_mat_108" rgba="0.898 0.9176 0.9294 1" specular="0" />
+    <material name="base_link_mat_109" rgba="1 1 1 1" specular="0" />
+    <material name="base_link_mat_110" rgba="0.698 0.698 0.698 1" specular="0" />
+    <material name="base_link_mat_111" rgba="0 1 1 1" specular="0" />
+    <material name="base_link_mat_112" rgba="0.4118 0.4118 0.4118 1" specular="0" />
+    <material name="base_link_mat_113" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_114" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_115" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_116" rgba="0.7529 0.7529 0.7529 1" specular="0" />
+    <material name="base_link_mat_117" rgba="0.4118 0.4118 0.4118 1" specular="0" />
+
+
+  </asset>
+
+  <worldbody>
+
+      <body name="base_footprint" pos="-2 0 0">
+        <joint name="base_x"   type="slide" axis="1 0 0" damping="20"/>
+        <joint name="base_y"   type="slide" axis="0 1 0" damping="20"/>
+        <joint name="base_yaw" type="hinge" axis="0 0 1" damping="80" frictionloss="5"/>
+      <body name="base_link" pos="0 0  0.147">
+          <site
+          name="lidar_site"
+          pos="0.25 0 0.01"
+          quat="1 0 0 0"
+          size="0.01"
+          rgba="1 0 0 1"
+          />
+        <inertial pos="0 0 0" mass="10" diaginertia="0.01 0.01 0.01"/>
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_1" type="mesh" mesh="tracer_base_link_no_wheel_mesh" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_2" type="mesh" mesh="tracer_base_link_no_wheel_mesh003" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_3" type="mesh" mesh="tracer_base_link_no_wheel_mesh045" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_4" type="mesh" mesh="tracer_base_link_no_wheel_mesh044" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_5" type="mesh" mesh="tracer_base_link_no_wheel_mesh042" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_6" type="mesh" mesh="tracer_base_link_no_wheel_mesh041" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_7" type="mesh" mesh="tracer_base_link_no_wheel_mesh046" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_8" type="mesh" mesh="tracer_base_link_no_wheel_mesh031" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_9" type="mesh" mesh="tracer_base_link_no_wheel_mesh048" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_10" type="mesh" mesh="tracer_base_link_no_wheel_mesh049" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_11" type="mesh" mesh="tracer_base_link_no_wheel_mesh050" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_12" type="mesh" mesh="tracer_base_link_no_wheel_mesh053" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_13" type="mesh" mesh="tracer_base_link_no_wheel_mesh051" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_14" type="mesh" mesh="tracer_base_link_no_wheel_mesh054" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_15" type="mesh" mesh="tracer_base_link_no_wheel_mesh052" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_16" type="mesh" mesh="tracer_base_link_no_wheel_mesh057" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_17" type="mesh" mesh="tracer_base_link_no_wheel_mesh058" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_18" type="mesh" mesh="tracer_base_link_no_wheel_mesh061" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_19" type="mesh" mesh="tracer_base_link_no_wheel_mesh059" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_20" type="mesh" mesh="tracer_base_link_no_wheel_mesh060" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_21" type="mesh" mesh="tracer_base_link_no_wheel_mesh055" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_22" type="mesh" mesh="tracer_base_link_no_wheel_mesh056" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_23" type="mesh" mesh="tracer_base_link_no_wheel_mesh040" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_24" type="mesh" mesh="tracer_base_link_no_wheel_mesh039" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_25" type="mesh" mesh="tracer_base_link_no_wheel_mesh038" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_26" type="mesh" mesh="tracer_base_link_no_wheel_mesh037" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_27" type="mesh" mesh="tracer_base_link_no_wheel_mesh006" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_28" type="mesh" mesh="tracer_base_link_no_wheel_mesh007" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_29" type="mesh" mesh="tracer_base_link_no_wheel_mesh011" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_30" type="mesh" mesh="tracer_base_link_no_wheel_mesh005" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_31" type="mesh" mesh="tracer_base_link_no_wheel_mesh004" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_32" type="mesh" mesh="tracer_base_link_no_wheel_mesh001" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_33" type="mesh" mesh="tracer_base_link_no_wheel_mesh008" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_34" type="mesh" mesh="tracer_base_link_no_wheel_mesh099" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_35" type="mesh" mesh="tracer_base_link_no_wheel_mesh100" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_36" type="mesh" mesh="tracer_base_link_no_wheel_mesh096" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_37" type="mesh" mesh="tracer_base_link_no_wheel_mesh097" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_38" type="mesh" mesh="tracer_base_link_no_wheel_mesh095" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_39" type="mesh" mesh="tracer_base_link_no_wheel_mesh091" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_40" type="mesh" mesh="tracer_base_link_no_wheel_mesh098" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_41" type="mesh" mesh="tracer_base_link_no_wheel_mesh103" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_42" type="mesh" mesh="tracer_base_link_no_wheel_mesh102" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_43" type="mesh" mesh="tracer_base_link_no_wheel_mesh104" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_44" type="mesh" mesh="tracer_base_link_no_wheel_mesh101" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_45" type="mesh" mesh="tracer_base_link_no_wheel_mesh105" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_46" type="mesh" mesh="tracer_base_link_no_wheel_mesh107" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_47" type="mesh" mesh="tracer_base_link_no_wheel_mesh106" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_48" type="mesh" mesh="tracer_base_link_no_wheel_mesh108" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_49" type="mesh" mesh="tracer_base_link_no_wheel_mesh110" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_50" type="mesh" mesh="tracer_base_link_no_wheel_mesh109" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_51" type="mesh" mesh="tracer_base_link_no_wheel_mesh112" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_52" type="mesh" mesh="tracer_base_link_no_wheel_mesh111" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_53" type="mesh" mesh="tracer_base_link_no_wheel_mesh114" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_54" type="mesh" mesh="tracer_base_link_no_wheel_mesh115" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_55" type="mesh" mesh="tracer_base_link_no_wheel_mesh113" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_56" type="mesh" mesh="tracer_base_link_no_wheel_mesh092" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_57" type="mesh" mesh="tracer_base_link_no_wheel_mesh116" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_58" type="mesh" mesh="tracer_base_link_no_wheel_mesh002" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_59" type="mesh" mesh="tracer_base_link_no_wheel_mesh016" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_60" type="mesh" mesh="tracer_base_link_no_wheel_mesh015" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_61" type="mesh" mesh="tracer_base_link_no_wheel_mesh017" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_62" type="mesh" mesh="tracer_base_link_no_wheel_mesh018" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_63" type="mesh" mesh="tracer_base_link_no_wheel_mesh023" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_64" type="mesh" mesh="tracer_base_link_no_wheel_mesh020" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_65" type="mesh" mesh="tracer_base_link_no_wheel_mesh019" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_66" type="mesh" mesh="tracer_base_link_no_wheel_mesh022" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_67" type="mesh" mesh="tracer_base_link_no_wheel_mesh026" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_68" type="mesh" mesh="tracer_base_link_no_wheel_mesh021" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_69" type="mesh" mesh="tracer_base_link_no_wheel_mesh010" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_70" type="mesh" mesh="tracer_base_link_no_wheel_mesh014" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_71" type="mesh" mesh="tracer_base_link_no_wheel_mesh013" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_72" type="mesh" mesh="tracer_base_link_no_wheel_mesh012" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_73" type="mesh" mesh="tracer_base_link_no_wheel_mesh025" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_74" type="mesh" mesh="tracer_base_link_no_wheel_mesh029" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_75" type="mesh" mesh="tracer_base_link_no_wheel_mesh028" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_76" type="mesh" mesh="tracer_base_link_no_wheel_mesh027" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_77" type="mesh" mesh="tracer_base_link_no_wheel_mesh030" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_78" type="mesh" mesh="tracer_base_link_no_wheel_mesh024" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_79" type="mesh" mesh="tracer_base_link_no_wheel_mesh036" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_80" type="mesh" mesh="tracer_base_link_no_wheel_mesh034" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_81" type="mesh" mesh="tracer_base_link_no_wheel_mesh035" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_82" type="mesh" mesh="tracer_base_link_no_wheel_mesh033" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_83" type="mesh" mesh="tracer_base_link_no_wheel_mesh047" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_84" type="mesh" mesh="tracer_base_link_no_wheel_mesh043" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_85" type="mesh" mesh="tracer_base_link_no_wheel_mesh032" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_86" type="mesh" mesh="tracer_base_link_no_wheel_mesh009" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_87" type="mesh" mesh="tracer_base_link_no_wheel_mesh062" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_88" type="mesh" mesh="tracer_base_link_no_wheel_mesh063" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_89" type="mesh" mesh="tracer_base_link_no_wheel_mesh064" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_90" type="mesh" mesh="tracer_base_link_no_wheel_mesh066" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_91" type="mesh" mesh="tracer_base_link_no_wheel_mesh065" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_92" type="mesh" mesh="tracer_base_link_no_wheel_mesh067" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_93" type="mesh" mesh="tracer_base_link_no_wheel_mesh083" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_94" type="mesh" mesh="tracer_base_link_no_wheel_mesh084" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_95" type="mesh" mesh="tracer_base_link_no_wheel_mesh086" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_96" type="mesh" mesh="tracer_base_link_no_wheel_mesh087" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_97" type="mesh" mesh="tracer_base_link_no_wheel_mesh082" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_98" type="mesh" mesh="tracer_base_link_no_wheel_mesh088" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_99" type="mesh" mesh="tracer_base_link_no_wheel_mesh089" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_100" type="mesh" mesh="tracer_base_link_no_wheel_mesh090" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_101" type="mesh" mesh="tracer_base_link_no_wheel_mesh085" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_102" type="mesh" mesh="tracer_base_link_no_wheel_mesh094" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_103" type="mesh" mesh="tracer_base_link_no_wheel_mesh093" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_104" type="mesh" mesh="tracer_base_link_no_wheel_mesh068" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_105" type="mesh" mesh="tracer_base_link_no_wheel_mesh070" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_106" type="mesh" mesh="tracer_base_link_no_wheel_mesh072" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_107" type="mesh" mesh="tracer_base_link_no_wheel_mesh069" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_108" type="mesh" mesh="tracer_base_link_no_wheel_mesh074" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_109" type="mesh" mesh="tracer_base_link_no_wheel_mesh071" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_110" type="mesh" mesh="tracer_base_link_no_wheel_mesh075" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_111" type="mesh" mesh="tracer_base_link_no_wheel_mesh073" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_112" type="mesh" mesh="tracer_base_link_no_wheel_mesh078" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_113" type="mesh" mesh="tracer_base_link_no_wheel_mesh076" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_114" type="mesh" mesh="tracer_base_link_no_wheel_mesh077" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_115" type="mesh" mesh="tracer_base_link_no_wheel_mesh081" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_116" type="mesh" mesh="tracer_base_link_no_wheel_mesh079" />
+        <geom pos="0 0 0" quat="0.7073883 0.7068252 0 0" group="1" contype="0" conaffinity="0" material="base_link_mat_117" type="mesh" mesh="tracer_base_link_no_wheel_mesh080" />
+        <body name="inertial_link" pos="0 0 0">
+          <inertial pos="0.015 0.0231317 0" mass="10" fullinertia="0.1851961 0.3648937 0.2238685 0 0.0000001 -0.0003867"/>
+        </body>
+        <body name="right_wheel_link" pos="0 -0.17 -0.082">
+          <joint name="right_wheel" type="hinge" axis="0 1 0" armature="0.5" damping="0.5" frictionloss="0.2"/>
+          <inertial pos="0 0 0" mass="600000" diaginertia="0.7171 0.1361 0.7171"/>
+          <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="right_wheel_link_mat" type="mesh" mesh="tracer_wheel" />
+          <geom pos="0 0 0" quat="0.7071055 0.7071081 0 0" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="cylinder" size="0.065 0.04" />
+        </body>
+        <body name="left_wheel_link" pos="0 0.17 -0.082">
+          <joint name="left_wheel"  type="hinge" axis="0 1 0" armature="0.5" damping="0.5" frictionloss="0.2"/>
+          <inertial pos="0 0 0" mass="600000" diaginertia="0.7171 0.1361 0.7171"/>
+          <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="left_wheel_link_mat" type="mesh" mesh="tracer_wheel" />
+          <geom pos="0 0 0" quat="0.7071055 0.7071081 0 0" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="cylinder" size="0.065 0.04" />
+        </body>
+        <body name="fl_castor_link" pos="0.18955 0.17 -0.0380886" quat="0.7073883 -0.7068252 0 0">
+          <inertial pos="0 0 0" mass="0.5" diaginertia="0.001 0.001 0.001"/>
+          <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="fl_castor_link_mat" type="mesh" mesh="castor_joint" />
+          <body name="fl_wheel_link" pos="-0.0218084 0.0689114 0">
+            <inertial pos="0 0 0" mass="0.3" diaginertia="0.0001 0.0001 0.0001"/>
+            <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="fl_wheel_link_mat" type="mesh" mesh="castor" />
+            <geom pos="0 0 0" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="sphere" size="0.04" />
+          </body>
+        </body>
+        <body name="fr_castor_link" pos="0.18955 -0.17 -0.0380886" quat="0.7073883 -0.7068252 0 0">
+          <inertial pos="0 0 0" mass="0.5" diaginertia="0.001 0.001 0.001"/>
+          <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="fr_castor_link_mat" type="mesh" mesh="castor_joint" />
+          <body name="fr_wheel_link" pos="-0.0218084 0.0689114 0">
+            <inertial pos="0 0 0" mass="0.3" diaginertia="0.0001 0.0001 0.0001"/>
+            <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="fr_wheel_link_mat" type="mesh" mesh="castor" />
+            <geom pos="0 0 0" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="sphere" size="0.04" />
+          </body>
+        </body>
+        <body name="rr_castor_link" pos="-0.18955 -0.17 -0.0380886" quat="0.7073883 -0.7068252 0 0">
+          <inertial pos="0 0 0" mass="0.5" diaginertia="0.001 0.001 0.001"/>
+          <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="rr_castor_link_mat" type="mesh" mesh="castor_joint" />
+          <body name="rr_wheel_link" pos="-0.0218084 0.0689114 0">
+            <inertial pos="0 0 0" mass="0.3" diaginertia="0.0001 0.0001 0.0001"/>
+            <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="rr_wheel_link_mat" type="mesh" mesh="castor" />
+            <geom pos="0 0 0" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="sphere" size="0.04" />
+          </body>
+        </body>
+        <body name="rl_castor_link" pos="-0.18955 0.17 -0.0380886" quat="0.7073883 -0.7068252 0 0">
+          <inertial pos="0 0 0" mass="0.5" diaginertia="0.001 0.001 0.001"/>
+          <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="rl_castor_link_mat" type="mesh" mesh="castor_joint" />
+          <body name="rl_wheel_link" pos="-0.0218084 0.0689114 0">
+            <inertial pos="0 0 0" mass="0.3" diaginertia="0.0001 0.0001 0.0001"/>
+            <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="rl_wheel_link_mat" type="mesh" mesh="castor" />
+            <geom pos="0 0 0" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="sphere" size="0.04" />
+          </body>
+        </body>
+        <body name="aluminium_base_link" pos="-0.142 0.115 0.016" quat="0.7073883 0 0 0.7068252">
+          <inertial pos="0 0 0.1" mass="0.2527392" diaginertia="0.0008804 0.000884 0.0000795"/>
+          <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="aluminium_base_link_mat" type="mesh" mesh="aluminium_base_link" />
+        </body>
+        <body name="aluminium_2_base_link" pos="-0.142 -0.115 0.016" quat="0.7073883 0 0 0.7068252">
+          <inertial pos="0 0 0.1" mass="0.2527392" diaginertia="0.0008804 0.000884 0.0000795"/>
+          <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="aluminium_2_base_link_mat" type="mesh" mesh="aluminium_base_link" />
+        </body>
+        <body name="aluminium_3_base_link" pos="0.145 0.115 0.016" quat="0.7073883 0 0 0.7068252">
+          <inertial pos="0 0 0.1" mass="0.2527392" diaginertia="0.0008804 0.000884 0.0000795"/>
+          <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="aluminium_3_base_link_mat" type="mesh" mesh="aluminium_base_link" />
+        </body>
+        <body name="aluminium_4_base_link" pos="0.145 -0.115 0.016" quat="0.7073883 0 0 0.7068252">
+          <inertial pos="0 0 0.1" mass="0.2527392" diaginertia="0.0008804 0.000884 0.0000795"/>
+          <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="aluminium_4_base_link_mat" type="mesh" mesh="aluminium_base_link" />
+        </body>
+        <body name="urbase_base_link" pos="0 0 0.218" quat="0.0007963 0 0 0.9999997">
+          <inertial pos="-0.0821499 0 -0.0025001" mass="0.9659606" diaginertia="0.0122165 0.027604 0.0398165"/>
+          <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="urbase_base_link_mat" type="mesh" mesh="urbase_base_link" quat="0.0 0 0 1" />
+          <geom pos="-0.04 0 -0.0025" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="box" size="0.3 0.2 0.02" />
+        </body>
+        <body name="jaka_base_link" pos="0 0 0.221" quat="0.7073883 0 0 -0.7068252">
+          <body name="Link_0" pos="0 0 0">
+            <inertial pos="0.0009637 0 0.019555" mass="1.0392" diaginertia="0.0048763 0.0068003 0.010618"/>
+            <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="Link_0_mat" type="mesh" mesh="Link_0" />
+            <geom pos="0 0 0.1" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="cylinder" size="0.06 0.075" />
+            <body name="Link_1" pos="0 0 0.12015">
+              <joint name="joint_1" type="hinge" axis="0 0 1" limited="true" range="-6.28 6.28" damping="1" frictionloss="0.5"/>
+              <inertial pos="0 0.0033226 -0.001509" mass="1.5135" diaginertia="0.044302 0.043091 0.030523"/>
+              <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="Link_1_mat" type="mesh" mesh="Link_1" />
+              <geom pos="0 0.152 0" quat="0.7071055 0.7071081 0 0" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="cylinder" size="0.06 0.075" />
+              <body name="Link_2" pos="0 0.14315 0" quat="0.7071055 0.7071081 0 0">
+                <joint name="joint_2" type="hinge" axis="0 0 1" limited="true" range="-1.48 4.62" damping="1" frictionloss="0.5"/>
+                <inertial pos="0.215 0 -0.14315" mass="1.5847" diaginertia="0.10377 1.5964 1.5689"/>
+                <geom pos="0 0 0.14315" group="1" contype="0" conaffinity="0" material="Link_2_mat" type="mesh" mesh="Link_2" />
+                <geom pos="0.215 0 0" quat="0.7071055 0 0.7071081 0" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="cylinder" size="0.05 0.145" />
+                <body name="Link_3" pos="0.43 0 0.14315">
+                  <joint name="joint_3" type="hinge" axis="0 0 1" limited="true" range="-3.05 3.05" damping="1" frictionloss="0.5"/>
+                  <inertial pos="0.19087 0 -0.010587" mass="1.8069" diaginertia="0.022066 0.41632 0.41071"/>
+                  <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="Link_3_mat" type="mesh" mesh="Link_3" />
+                  <geom pos="0 0 -0.14" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="cylinder" size="0.055 0.075" />
+                  <geom pos="0.13 0 0" quat="0.7071055 0 0.7071081 0" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="cylinder" size="0.05 0.175" />
+                  <geom pos="0.3685 0 0" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="cylinder" size="0.045 0.05" />
+                  <body name="Link_4" pos="0.3685 -0.0000119 -0.114">
+                    <joint name="joint_4" type="hinge" axis="0 0 1" limited="true" range="-1.48 4.62" damping="0.5" frictionloss="0.3"/>
+                    <inertial pos="0 -0.0058004 0.0026717" mass="1.5525" diaginertia="0.0092564 0.0052251 0.0089683"/>
+                    <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="Link_4_mat" type="mesh" mesh="Link_4" />
+                    <geom pos="0 0 0" quat="0.7071055 0.7071081 0 0" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="cylinder" size="0.045 0.05" />
+                    <body name="Link_5" pos="0 -0.1135 0" quat="0.7071055 0.7071081 0 0">
+                      <joint name="joint_5" type="hinge" axis="0 0 1" limited="true" range="-6.28 6.28" damping="0.5" frictionloss="0.3"/>
+                      <inertial pos="0 -0.0028889 -0.0023424" mass="1.3339" diaginertia="0.012993 0.0058454 0.0127"/>
+                      <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="Link_5_mat" type="mesh" mesh="Link_5" />
+                      <geom pos="0 0.02 0" quat="0.7071055 0.7071081 0 0" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="cylinder" size="0.045 0.085" />
+                      <body name="Link_6" pos="0 0.107 0" quat="0.7071055 -0.7071081 0 0">
+                        <joint name="joint_6" type="hinge" axis="0 0 1" limited="true" range="-6.28 6.28" damping="0.5" frictionloss="0.3"/>
+                        <inertial pos="0 0 -0.021245" mass="1.4169" diaginertia="0.0007185 0.0007238 0.0011337"/>
+                        <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="Link_6_mat" type="mesh" mesh="Link_6" />
+                        <body name="Link_6_45" pos="0 0 0" quat="0.9238792 0 0 -0.3826843">
+                          <body name="jk_se_vi_200_link" pos="0 0 0.0315" quat="0.3826834 0 0 -0.9238795">
+                            <inertial pos="0 0 0.0051933" mass="0.1139765" diaginertia="0.0000565 0.0000549 0.0000865"/>
+                            <geom pos="0 0 -0.0315" group="1" contype="0" conaffinity="0" material="jk_se_vi_200_link_mat" type="mesh" mesh="jk_se_vi_200_link" />
+                            <body name="tool0_and_camera_link" pos="0 0 0" quat="0.3826834 0 0 0.9238795">
+                              <inertial pos="0 0 0" mass="0.7" diaginertia="0.001 0.001 0.001"/>
+                              <geom pos="0 0 0" group="1" contype="0" conaffinity="0" material="tool0_and_camera_link_mat" type="mesh" mesh="tool0" />
+                              <geom pos="0 -0.04 0.135" rgba="0.9373 0.2667 0.2667 1" group="3" contype="1" conaffinity="1" type="cylinder" size="0.08 0.135" />
+                                <body name="d435i_link" pos="0 -0.085 0.03" quat="0.0007963 0 0 0.9999997">
+                                  <geom pos="0 0 0"
+                                        group="1"
+                                        contype="0"
+                                        conaffinity="0"
+                                        material="d435i_link_mat"
+                                        type="mesh"
+                                        mesh="realsense_d435" />
+
+                                  <!-- 深度/RGB 相机 -->
+                                  <!-- MuJoCo camera 沿自身 -Z 方向看 -->
+                                  <!-- 这里假设机器人局部 +X 是相机前方 -->
+                                  <camera name="d435_depth"
+                                          pos="0 0.1 0"
+                                          xyaxes="-1 0 0  0 1 0"
+                                          fovy="58"
+                                          resolution="640 480"
+                                          output="rgb depth"/>
+                                </body>
+                            </body>
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <actuator>
+  <velocity name="right_wheel_servo" joint="right_wheel" kv="30000" ctrllimited="true" ctrlrange="-30 30" forcelimited="true" forcerange="-2000000 2000000"/>
+  <velocity name="left_wheel_servo"  joint="left_wheel"  kv="30000" ctrllimited="true" ctrlrange="-30 30" forcelimited="true" forcerange="-2000000 2000000"/>
+
+    <position name="joint_1_servo" joint="joint_1" kp="1000" kv="200" ctrllimited="true" ctrlrange="-6.28 6.28" forcelimited="true" forcerange="-200 200" />
+    <position name="joint_2_servo" joint="joint_2" kp="2500" kv="250" ctrllimited="true" ctrlrange="-1.48 4.62" forcelimited="true" forcerange="-500 500" />
+    <position name="joint_3_servo" joint="joint_3" kp="2000" kv="250" ctrllimited="true" ctrlrange="-3.05 3.05" forcelimited="true" forcerange="-500 500" />
+    <position name="joint_4_servo" joint="joint_4" kp="300" kv="15" ctrllimited="true" ctrlrange="-1.48 4.62" forcelimited="true" forcerange="-200 200" />
+    <position name="joint_5_servo" joint="joint_5" kp="300" kv="15" ctrllimited="true" ctrlrange="-6.28 6.28" forcelimited="true" forcerange="-300 300" />
+    <position name="joint_6_servo" joint="joint_6" kp="50" kv="1" ctrllimited="true" ctrlrange="-6.28 6.28" forcelimited="true" forcerange="-100 100" />
+
+  </actuator>
+
+  <keyframe>
+    <key name="low"
+        qpos="0 0 0  0 0  -3.1415 1.309 -1.309 1.5707 1.5707 0.785398"
+        qvel="0 0 0  0 0  0 0 0 0 0 0"
+        ctrl="0 0   -3.1415 1.309 -1.309 1.5707 1.5707 0.785398"/>
+    <key name="home"
+        qpos="0 0 0  0 0  0 1.5707 0 1.5707 3.14159 0.785398"
+        qvel="0 0 0  0 0  0 0 0 0 0 0"
+        ctrl="0 0   0 1.5707 0 1.5707 3.14159 0.785398"/>
+
+  </keyframe>
+
+</mujoco>

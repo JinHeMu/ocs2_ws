@@ -1,0 +1,74 @@
+# =====================================================================
+# sensors.yaml —— mujoco_bridge 全部参数（底盘 / 机械臂 / LiDAR / 相机）
+#
+# 频率说明：MuJoCo 物理步进通常是 1/timestep（默认 0.002s = 500Hz）。
+# 传感器不再跟着 500Hz 跑，而是按下面的 rate 抽帧，避免仿真卡顿。
+#   lidar.rate  = 25.0   -> 雷达 25Hz
+#   camera.rate = 15.0   -> 相机 15Hz
+# 改这两个值即可调节传感器频率。
+# =====================================================================
+mujoco_bridge:
+  ros__parameters:
+    # ---- 模型（由 launch 注入 model_path，这里留空）----
+    # model_path: ""
+
+    # ---- 底盘（平面 3 自由度运动学跟随）----
+    base_x_joint: "base_x"
+    base_y_joint: "base_y"
+    base_yaw_joint: "base_yaw"
+    wheel_separation: 0.34
+    wheel_radius: 0.065
+    exact_base: true          # true: 纯运动学底盘，零稳态偏差
+    spin_wheels: true         # 仅视觉：让轮子转
+
+    # ---- 发布频率 ----
+    publish_rate: 100.0       # /joint_states /odom /tf
+    clock_rate: 250.0         # /clock
+
+    # ---- 坐标系 ----
+    odom_frame: "odom"
+    base_frame: "base_footprint"
+    publish_odom_tf: true
+
+    # ---- 机械臂 ----
+    arm_actuator_suffix: "_servo"
+    init_keyframe: "home"
+
+
+    # =================================================================
+    #  LiDAR（mujoco_lidar 光线追踪，独立线程）
+    # =================================================================
+    lidar:
+      enable: false
+      site_name: "lidar_site"        # 必须与 XML 中 <site name=.../> 一致
+      frame_id: "lidar_link"         # 点云坐标系，由桥接发 base_footprint->lidar_link
+      topic: "/lidar/points"
+      rate: 25.0                     # 扫描频率(Hz)
+      backend: "cpu"                 # cpu | taichi(GPU，需 taichi+CUDA)
+      cutoff_dist: 5.0               # 最大测距(m)
+      pattern: "grid"                # grid | HDL64 | HDL32 ...（grid 用下面 cols/rows）
+      num_ray_cols: 64               # 水平线数
+      num_ray_rows: 16               # 垂直线数
+      taichi_device_memory_gb: 2.0   # 仅 backend=taichi 时生效
+
+    # =================================================================
+    #  深度 / RGB 相机（MuJoCo 离屏渲染）
+    # =================================================================
+    camera:
+      enable: false
+      camera_name: "d435_depth"      # 必须与 XML 中 <camera name=.../> 一致
+      width: 640
+      height: 480
+      fovy: 58.0                     # 垂直 FOV(度)，与 XML 的 fovy 保持一致
+      rate: 30.0                    # 渲染/发布帧率(Hz)
+      color_frame_id: "camera_color_optical_frame"
+      depth_frame_id: "camera_depth_optical_frame"
+      color_topic: "/camera/color/image_raw"
+      color_info_topic: "/camera/color/camera_info"
+      depth_topic: "/camera/depth/image_raw"
+      depth_info_topic: "/camera/depth/camera_info"
+      publish_color: true
+      publish_depth: true
+      publish_camera_info: true
+      max_depth: 5.0                 # 深度图最大有效距离(m)
+      clip_far_to_zero: true         # 超过 max_depth 的像素置 0（RealSense 习惯）

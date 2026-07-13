@@ -1,0 +1,95 @@
+<mujoco model="tracer_jaka_zu5_scene">
+
+  <compiler angle="radian"
+            meshdir="/home/a/mujoco_sim/tracer_jaka_zu5/tracer_jaka_zu5_mjcf/tracer_jaka_zu5/meshes" />
+
+  <!-- 引入机器人描述文件 -->
+  <include file="tracer_jaka_zu5_robot.xml"/>
+
+  <asset>
+    <!-- 地板纹理 -->
+    <texture name="groundplane" type="2d" builtin="checker" mark="edge"
+             rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3" markrgb="0.8 0.8 0.8"
+             width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texrepeat="5 5"
+              texuniform="true" reflectance="0.2"/>
+  </asset>
+
+  <worldbody>
+    <light name="top" pos="0 0 3" dir="0 0 -1" diffuse="0.7 0.7 0.7" />
+
+    <geom name="floor"
+          type="plane"
+          size="10 10 0.05"
+          pos="0 0 0"
+          material="groundplane"
+          contype="1"
+          conaffinity="1"
+          condim="3"
+          friction="2.0 0.01 0.001" />
+
+    <!-- 四周墙体 -->
+    <body name="wall_n" pos="0 3 0.5">
+      <geom type="box" size="3 0.05 0.5"  contype="1" conaffinity="1"
+            rgba="0.8 0.8 0.78 1"/>
+    </body>
+
+    <body name="wall_s" pos="0 -3 0.5">
+      <geom type="box" size="3 0.05 0.5"  contype="1" conaffinity="1"
+            rgba="0.8 0.8 0.78 1"/>
+    </body>
+
+    <body name="wall_e" pos="3 0 0.5">
+      <geom type="box" size="0.05 3 0.5"  contype="1" conaffinity="1"
+            rgba="0.8 0.8 0.78 1"/>
+    </body>
+
+    <body name="wall_w" pos="-3 0 0.5">
+      <geom type="box" size="0.05 3 0.5"  contype="1" conaffinity="1"
+            rgba="0.8 0.8 0.78 1"/>
+    </body>
+
+
+<body name="front_table" pos="0.0 0 0">
+
+  <geom name="front_table_top"
+        type="box"
+        pos="0 0 0.82"
+        size="0.3 2.5 0.02"
+        contype="1"
+        conaffinity="1"
+        rgba="0.55 0.38 0.22 1"/>
+
+  <geom name="front_table_l1"
+        type="box"
+        pos=" 0.0  2.4 0.4"
+        size="0.3 0.3 0.4"
+        contype="1"
+        conaffinity="1"
+        rgba="0.3 0.2 0.1 1"/>
+
+  <geom name="front_table_l2"
+        type="box"
+        pos=" 0.0 -2.4 0.4"
+        size="0.3 0.3 0.4"
+        contype="1"
+        conaffinity="1"
+        rgba="0.3 0.2 0.1 1"/>
+
+
+</body>
+
+
+
+
+
+    <!-- 静态箱子障碍 -->
+    <body name="box_obs" pos="1.0 -1.2 0.25">
+      <geom type="box" size="0.25 0.25 0.25"
+             contype="1" conaffinity="1" rgba="0.4 0.5 0.7 1"/>
+    </body>
+
+
+  </worldbody>
+
+</mujoco>

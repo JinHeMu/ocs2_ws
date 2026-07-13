@@ -1,0 +1,9 @@
+<library path="jaka_hardware_interface">
+  <class name="jaka_hardware_interface/JakaHardwareInterface"
+         type="jaka_hardware_interface::JakaHardwareInterface"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      ros2_control hardware interface.
+    </description>
+  </class>
+</library>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="tracer_jaka_zu5">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="arm">
+        <joint name="fixed"/>
+        <joint name="joint_1"/>
+        <joint name="joint_2"/>
+        <joint name="joint_3"/>
+        <joint name="joint_4"/>
+        <joint name="joint_5"/>
+        <joint name="joint_6"/>
+        <joint name="jk_se_vi_200_joint"/>
+        <joint name="tool0_and_camera_link_joint"/>
+        <joint name="tool0_joint"/>
+    </group>
+       <group_state name="zero" group="jaka_arm">
+        <joint name="joint_1" value="0"/>
+        <joint name="joint_2" value="0"/>
+        <joint name="joint_3" value="0"/>
+        <joint name="joint_4" value="0"/>
+        <joint name="joint_5" value="0"/>
+        <joint name="joint_6" value="0"/>
+    </group_state>
+
+    <group_state name="pose_00" group="arm">
+        <joint name="joint_1" value="-0.515"/>
+        <joint name="joint_2" value="1.5707"/>
+        <joint name="joint_3" value="-1.5707"/>
+        <joint name="joint_4" value="1.5707"/>
+        <joint name="joint_5" value="1.5707"/>
+        <joint name="joint_6" value="0.254"/>
+    </group_state>
+    
+    <group_state name="pose_01" group="arm">
+        <joint name="joint_1" value="0"/>
+        <joint name="joint_2" value="1.5707"/>
+        <joint name="joint_3" value="-1.5707"/>
+        <joint name="joint_4" value="1.5707"/>
+        <joint name="joint_5" value="1.5707"/>
+        <joint name="joint_6" value="0.785398"/>
+    </group_state>
+    <group_state name="pose_02" group="arm">
+        <joint name="joint_1" value="1.5707"/>
+        <joint name="joint_2" value="1.0472"/>
+        <joint name="joint_3" value="1.1345"/>
+        <joint name="joint_4" value="1.0472"/>
+        <joint name="joint_5" value="1.5707"/>
+        <joint name="joint_6" value="0.785398"/>
+    </group_state>
+    <group_state name="pose_03" group="arm">
+        <joint name="joint_1" value="1.5707"/>
+        <joint name="joint_2" value="0.785398"/>
+        <joint name="joint_3" value="1.6581"/>
+        <joint name="joint_4" value="0.785398"/>
+        <joint name="joint_5" value="1.5707"/>
+        <joint name="joint_6" value="0.785398"/>
+    </group_state>
+    <group_state name="pose_04" group="arm">
+        <joint name="joint_1" value="1.5707"/>
+        <joint name="joint_2" value="1.9199"/>
+        <joint name="joint_3" value="-0.5236"/>
+        <joint name="joint_4" value="0.785398"/>
+        <joint name="joint_5" value="1.5707"/>
+        <joint name="joint_6" value="0.785398"/>
+    </group_state>
+    <group_state name="pose_05" group="arm">
+        <joint name="joint_1" value="1.5707"/>
+        <joint name="joint_2" value="2.3562"/>
+        <joint name="joint_3" value="-1.5707"/>
+        <joint name="joint_4" value="1.5707"/>
+        <joint name="joint_5" value="1.5707"/>
+        <joint name="joint_6" value="0.785398"/>
+    </group_state>
+    <group_state name="pose_06" group="arm">
+        <joint name="joint_1" value="1.5707"/>
+        <joint name="joint_2" value="1.309"/>
+        <joint name="joint_3" value="-1.309"/>
+        <joint name="joint_4" value="1.5707"/>
+        <joint name="joint_5" value="1.5707"/>
+        <joint name="joint_6" value="0.785398"/>
+    </group_state>
+    <group_state name="up" group="arm">
+        <joint name="joint_1" value="0"/>
+        <joint name="joint_2" value="1.5707"/>
+        <joint name="joint_3" value="0"/>
+        <joint name="joint_4" value="1.5707"/>
+        <joint name="joint_5" value="3.14159"/>
+        <joint name="joint_6" value="0.785398"/>
+    </group_state>
+    <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
+    <passive_joint name="left_wheel"/>
+    <passive_joint name="right_wheel"/>
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="Link_0" link2="Link_1" reason="Adjacent"/>
+    <disable_collisions link1="Link_0" link2="Link_2" reason="Never"/>
+    <disable_collisions link1="Link_0" link2="Link_4" reason="Never"/>
+    <disable_collisions link1="Link_0" link2="fl_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="Link_0" link2="fr_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="Link_0" link2="left_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="Link_0" link2="right_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="Link_0" link2="rl_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="Link_0" link2="rr_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="Link_0" link2="urbase_base_link" reason="Adjacent"/>
+    <disable_collisions link1="Link_1" link2="Link_2" reason="Adjacent"/>
+    <disable_collisions link1="Link_1" link2="Link_3" reason="Never"/>
+    <disable_collisions link1="Link_1" link2="fl_wheel_link" reason="Never"/>
+    <disable_collisions link1="Link_1" link2="fr_wheel_link" reason="Never"/>
+    <disable_collisions link1="Link_1" link2="left_wheel_link" reason="Never"/>
+    <disable_collisions link1="Link_1" link2="right_wheel_link" reason="Never"/>
+    <disable_collisions link1="Link_1" link2="rl_wheel_link" reason="Never"/>
+    <disable_collisions link1="Link_1" link2="rr_wheel_link" reason="Never"/>
+    <disable_collisions link1="Link_1" link2="urbase_base_link" reason="Never"/>
+    <disable_collisions link1="Link_2" link2="Link_3" reason="Adjacent"/>
+    <disable_collisions link1="Link_2" link2="fl_wheel_link" reason="Never"/>
+    <disable_collisions link1="Link_2" link2="fr_wheel_link" reason="Never"/>
+    <disable_collisions link1="Link_2" link2="rl_wheel_link" reason="Never"/>
+    <disable_collisions link1="Link_2" link2="rr_wheel_link" reason="Never"/>
+    <disable_collisions link1="Link_3" link2="Link_4" reason="Adjacent"/>
+    <disable_collisions link1="Link_3" link2="tool0_and_camera_link" reason="Default"/>
+    <disable_collisions link1="Link_4" link2="Link_5" reason="Adjacent"/>
+    <disable_collisions link1="Link_4" link2="tool0_and_camera_link" reason="Never"/>
+    <disable_collisions link1="Link_5" link2="tool0_and_camera_link" reason="Adjacent"/>
+    <disable_collisions link1="fl_wheel_link" link2="fr_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="fl_wheel_link" link2="left_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="fl_wheel_link" link2="right_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="fl_wheel_link" link2="rl_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="fl_wheel_link" link2="rr_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="fl_wheel_link" link2="urbase_base_link" reason="Adjacent"/>
+    <disable_collisions link1="fr_wheel_link" link2="left_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="fr_wheel_link" link2="right_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="fr_wheel_link" link2="rl_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="fr_wheel_link" link2="rr_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="fr_wheel_link" link2="urbase_base_link" reason="Adjacent"/>
+    <disable_collisions link1="left_wheel_link" link2="right_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="left_wheel_link" link2="rl_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="left_wheel_link" link2="rr_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="left_wheel_link" link2="urbase_base_link" reason="Adjacent"/>
+    <disable_collisions link1="right_wheel_link" link2="rl_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="right_wheel_link" link2="rr_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="right_wheel_link" link2="urbase_base_link" reason="Adjacent"/>
+    <disable_collisions link1="rl_wheel_link" link2="rr_wheel_link" reason="Adjacent"/>
+    <disable_collisions link1="rl_wheel_link" link2="urbase_base_link" reason="Adjacent"/>
+    <disable_collisions link1="rr_wheel_link" link2="urbase_base_link" reason="Adjacent"/>
+</robot>

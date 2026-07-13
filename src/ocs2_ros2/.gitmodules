@@ -1,0 +1,6 @@
+[submodule "ocs2_robotic_assets"]
+	path = submodules/ocs2_robotic_assets
+	url = https://github.com/legubiao/ocs2_robotic_assets
+[submodule "submodules/plane_segmentation_ros2"]
+	path = submodules/plane_segmentation_ros2
+	url = https://github.com/legubiao/plane_segmentation_ros2

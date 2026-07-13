@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: tracer_jaka_mujoco
+    relative_path: urdf/tracer_jaka_zu5.urdf
+  srdf:
+    relative_path: config/tracer_jaka_zu5.srdf
+  package_settings:
+    author_name: Jinhemu
+    author_email: 490754775@qq.com
+    generated_timestamp: 1780037799
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!--
+  ros2_control 硬件接口定义（用于 mujoco_ros2_control 插件）。
+  用法：在你现有的 tracer_jaka_zu5.urdf 的 </robot> 之前，把下面
+  <ros2_control> ... </ros2_control> 整段粘贴进去；或把 URDF 改成
+  xacro 后用 <xacro:include filename="tracer_jaka_zu5.ros2_control.xacro"/>。
+
+  关节名必须与 MuJoCo XML 完全一致：joint_1..joint_6 / left_wheel / right_wheel。
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <ros2_control name="MujocoSystem" type="system">
+    <hardware>
+      <!-- 不同 fork 的 plugin 名可能不同，按你安装的版本改：
+           sangteak601/mujoco_ros2_control -> mujoco_ros2_control/MujocoSystem -->
+      <plugin>mujoco_ros2_control/MujocoSystem</plugin>
+    </hardware>
+
+    <!-- ===== 机械臂 6 个关节：位置控制 ===== -->
+    <joint name="joint_1">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="joint_2">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="joint_3">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="joint_4">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="joint_5">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="joint_6">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <!-- ===== 差速底盘两个驱动轮：速度控制 ===== -->
+    <joint name="left_wheel">
+      <command_interface name="velocity"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="right_wheel">
+      <command_interface name="velocity"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+</robot>

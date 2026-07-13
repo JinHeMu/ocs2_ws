@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="tracer_jaka_zu5_ros2_control" params="name initial_positions_file">
+        <xacro:property name="initial_positions" value="${load_yaml(initial_positions_file)['initial_positions']}"/>
+
+        <ros2_control name="${name}" type="system">
+            <hardware>
+                <!-- By default, set up controllers for simulation. This won't work on real hardware -->
+                <plugin>jaka_hardware_interface/JakaHardwareInterface</plugin>
+                <!-- <plugin>mock_components/GenericSystem</plugin> -->
+                <!-- <plugin>gz_ros2_control/GazeboSimSystem</plugin> -->
+                <param name="robot_ip">10.5.5.100</param>
+                <param name="local_ip">10.5.5.203</param>
+                
+                <!-- 力传感器偏置 -->
+                <param name="ft_bias_fx">-9.80</param>
+                <param name="ft_bias_fy">-6.78</param>
+                <param name="ft_bias_fz">-6.00</param>
+                <param name="ft_bias_tx">0.54</param>
+                <param name="ft_bias_ty">-0.63</param>
+                <param name="ft_bias_tz">0.03</param>
+
+                <param name="r_t_s_x">0.0</param>
+                <param name="r_t_s_y">-0.05</param>
+                <param name="r_t_s_z">-0.226</param>
+
+                <!-- 死区 -->
+                <param name="ft_deadband_force">1.0</param>
+                <param name="ft_deadband_torque">0.00</param>
+
+                <!-- 滤波系数 -->
+                <param name="ft_filter_alpha">0.1</param>
+
+            </hardware>
+            <joint name="joint_1">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['joint_1']}</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                
+            </joint>
+            <joint name="joint_2">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['joint_2']}</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                
+            </joint>
+            <joint name="joint_3">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['joint_3']}</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                
+            </joint>
+
+            <joint name="joint_4">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['joint_4']}</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                
+            </joint>
+            <joint name="joint_5">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['joint_5']}</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                
+            </joint>
+            <joint name="joint_6">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['joint_6']}</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                
+            </joint>
+            
+            <sensor name="tcp_fts_sensor">
+              <state_interface name="force.x"/>
+              <state_interface name="force.y"/>
+              <state_interface name="force.z"/>
+              <state_interface name="torque.x"/>
+              <state_interface name="torque.y"/>
+              <state_interface name="torque.z"/>
+            </sensor>
+
+
+        </ros2_control>
+    </xacro:macro>
+</robot>

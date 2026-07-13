@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>tracer_jaka_ocs2</name>
+  <version>0.1.0</version>
+  <description>
+    OCS2 whole-body MPC integration for the Tracer + JAKA mobile manipulator
+    running in Gazebo Harmonic / ROS 2 Jazzy.
+  </description>
+  <maintainer email="user@todo.todo">user</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>xacro</buildtool_depend>
+
+  <!-- ROS 2 core -->
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>trajectory_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>interactive_markers</depend>
+  <depend>std_srvs</depend>
+
+  <!-- OCS2 (ROS 2 port, e.g. legubiao/ocs2_ros2 or your fork) -->
+  <depend>ocs2_core</depend>
+  <depend>ocs2_ddp</depend>
+  <depend>ocs2_mpc</depend>
+  <depend>ocs2_oc</depend>
+  <depend>ocs2_robotic_tools</depend>
+  <depend>ocs2_pinocchio_interface</depend>
+  <depend>ocs2_self_collision</depend>
+  <depend>ocs2_ros_interfaces</depend>
+  <depend>ocs2_mobile_manipulator</depend>
+  <depend>ocs2_msgs</depend>
+
+  <!-- Runtime deps to bring up sim -->
+  <exec_depend>tracer_jaka_gazebo</exec_depend>
+  <exec_depend>ros_gz_sim</exec_depend>
+  <exec_depend>ros_gz_bridge</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>diff_drive_controller</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>joy</exec_depend>
+  
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -1,0 +1,1230 @@
+<?xml version="1.0" ?>
+<!-- =================================================================================== -->
+<!-- |    简化碰撞模型版本：将 mesh collision 替换为基本几何体（cylinder/box/sphere） | -->
+<!-- |    用于 OCS2 self-collision 检测，可显著加速碰撞查询                          | -->
+<!-- =================================================================================== -->
+<robot name="tracer_jaka_zu5">
+
+  <!-- ==================== 移动底盘部分 ==================== -->
+  <!-- Base link：用 box 近似 Tracer 底盘外形 -->
+  <link name="base_link">
+    <visual>
+      <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/tracer_description/meshes/tracer_base_link_no_wheel.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.02"/>
+      <geometry>
+        <box size="0.58 0.58 0.18"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="inertial_link">
+    <inertial>
+      <mass value="132.3898489950015"/>
+      <origin xyz="0.015 0.0231316650320557 0"/>
+      <inertia ixx="0.185196122711036" ixy="4.30144213829512E-08" ixz="5.81037523686401E-08" iyy="0.364893736238929" iyz="-0.000386720198091934" izz="0.223868521722778"/>
+    </inertial>
+  </link>
+  <joint name="inertial_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="inertial_link"/>
+  </joint>
+
+  <!-- 驱动轮：简化为圆柱 -->
+  <link name="right_wheel_link">
+    <inertial>
+      <mass value="6"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.7171" ixy="0" ixz="0" iyy="0.1361" iyz="0" izz="0.7171"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/tracer_description/meshes/tracer_wheel.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="1.5708 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.08" radius="0.085"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_wheel" type="fixed">
+    <parent link="base_link"/>
+    <child link="right_wheel_link"/>
+    <origin rpy="0 0 0" xyz="0 -0.17 -0.082"/>
+    <axis rpy="0 0 0" xyz="0 1 0"/>
+  </joint>
+
+  <link name="left_wheel_link">
+    <inertial>
+      <mass value="6"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.7171" ixy="0" ixz="0" iyy="0.1361" iyz="0" izz="0.7171"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/tracer_description/meshes/tracer_wheel.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="1.5708 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.08" radius="0.085"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_wheel" type="fixed">
+    <parent link="base_link"/>
+    <child link="left_wheel_link"/>
+    <origin rpy="3.14 0 0" xyz="0 0.17 -0.082"/>
+    <axis rpy="0 0 0" xyz="0 1 0"/>
+  </joint>
+
+  <!-- 万向轮支架与轮子：简化为小圆柱/球 -->
+  <link name="fl_castor_link">
+    <inertial>
+      <mass value="1"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.7171" ixy="0" ixz="0" iyy="0.1361" iyz="0" izz="0.7171"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/tracer_description/meshes/castor_joint.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.04" radius="0.035"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="fl_castor_wheel" type="fixed">
+    <origin rpy="-1.57 0 0" xyz="0.18955 0.17 -0.0380886"/>
+    <parent link="base_link"/>
+    <child link="fl_castor_link"/>
+    <axis rpy="0 0 0" xyz="0 1 0"/>
+  </joint>
+
+  <link name="fr_castor_link">
+    <inertial>
+      <mass value="1"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.7171" ixy="0" ixz="0" iyy="0.1361" iyz="0" izz="0.7171"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/tracer_description/meshes/castor_joint.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.04" radius="0.035"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="fr_castor_wheel" type="fixed">
+    <origin rpy="-1.57 0 0" xyz="0.18955 -0.17 -0.0380886"/>
+    <parent link="base_link"/>
+    <child link="fr_castor_link"/>
+    <axis rpy="0 0 0" xyz="0 1 0"/>
+  </joint>
+
+  <link name="rr_castor_link">
+    <inertial>
+      <mass value="1"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.7171" ixy="0" ixz="0" iyy="0.1361" iyz="0" izz="0.7171"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/tracer_description/meshes/castor_joint.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.04" radius="0.035"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="rr_castor_wheel" type="fixed">
+    <origin rpy="-1.57 0 0" xyz="-0.18955 -0.17 -0.0380886"/>
+    <parent link="base_link"/>
+    <child link="rr_castor_link"/>
+    <axis rpy="0 0 0" xyz="0 1 0"/>
+  </joint>
+
+  <link name="rl_castor_link">
+    <inertial>
+      <mass value="1"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.7171" ixy="0" ixz="0" iyy="0.1361" iyz="0" izz="0.7171"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/tracer_description/meshes/castor_joint.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.04" radius="0.035"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="rl_castor_wheel" type="fixed">
+    <origin rpy="-1.57 0 0" xyz="-0.18955 0.17 -0.0380886"/>
+    <parent link="base_link"/>
+    <child link="rl_castor_link"/>
+    <axis rpy="0 0 0" xyz="0 1 0"/>
+  </joint>
+
+  <!-- 万向轮：小球 -->
+  <link name="fl_wheel_link">
+    <inertial>
+      <mass value="1"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.3131" ixy="0" ixz="0" iyy="0.3131" iyz="0" izz="0.1361"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/tracer_description/meshes/castor.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="fl_wheel" type="fixed">
+    <parent link="fl_castor_link"/>
+    <child link="fl_wheel_link"/>
+    <dynamics damping="0.0" friction="0.0"/>
+    <origin rpy="0 0 0" xyz="-0.0218084 0.067 0"/>
+    <axis rpy="0 0 0" xyz="0 0 1"/>
+  </joint>
+
+  <link name="fr_wheel_link">
+    <inertial>
+      <mass value="1"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.3131" ixy="0" ixz="0" iyy="0.3131" iyz="0" izz="0.1361"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/tracer_description/meshes/castor.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="fr_wheel" type="fixed">
+    <parent link="fr_castor_link"/>
+    <child link="fr_wheel_link"/>
+    <dynamics damping="0.0" friction="0.0"/>
+    <origin rpy="0 0 0" xyz="-0.0218084 0.067 0"/>
+    <axis rpy="0 0 0" xyz="0 0 1"/>
+  </joint>
+
+  <link name="rr_wheel_link">
+    <inertial>
+      <mass value="1"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.3131" ixy="0" ixz="0" iyy="0.3131" iyz="0" izz="0.1361"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/tracer_description/meshes/castor.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="rr_wheel" type="fixed">
+    <parent link="rr_castor_link"/>
+    <child link="rr_wheel_link"/>
+    <dynamics damping="0.0" friction="0.0"/>
+    <origin rpy="0 0 0" xyz="-0.0218084 0.067 0"/>
+    <axis rpy="0 0 0" xyz="0 0 1"/>
+  </joint>
+
+  <link name="rl_wheel_link">
+    <inertial>
+      <mass value="1"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.3131" ixy="0" ixz="0" iyy="0.3131" iyz="0" izz="0.1361"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/tracer_description/meshes/castor.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="rl_wheel" type="fixed">
+    <parent link="rl_castor_link"/>
+    <child link="rl_wheel_link"/>
+    <dynamics damping="0.0" friction="0.0"/>
+    <origin rpy="0 0 0" xyz="-0.0218084 0.067 0"/>
+    <axis rpy="0 0 0" xyz="0 0 1"/>
+  </joint>
+
+  <!-- ==================== 传动 / Gazebo 控制（保持原样） ==================== -->
+  <transmission name="right_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="right_wheel_motor"><mechanicalReduction>1</mechanicalReduction></actuator>
+    <joint name="right_wheel"><hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface></joint>
+  </transmission>
+  <transmission name="left_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="left_wheel_motor"><mechanicalReduction>1</mechanicalReduction></actuator>
+    <joint name="left_wheel"><hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface></joint>
+  </transmission>
+  <transmission name="fl_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="fl_wheel_motor"><mechanicalReduction>1</mechanicalReduction></actuator>
+    <joint name="fl_wheel"><hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface></joint>
+  </transmission>
+  <transmission name="fr_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="fr_wheel_motor"><mechanicalReduction>1</mechanicalReduction></actuator>
+    <joint name="fr_wheel"><hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface></joint>
+  </transmission>
+  <transmission name="rr_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="rr_wheel_motor"><mechanicalReduction>1</mechanicalReduction></actuator>
+    <joint name="rr_wheel"><hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface></joint>
+  </transmission>
+  <transmission name="rl_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="rl_wheel_motor"><mechanicalReduction>1</mechanicalReduction></actuator>
+    <joint name="rl_wheel"><hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface></joint>
+  </transmission>
+  <transmission name="fl_castor_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="fl_castor_wheel_motor"><mechanicalReduction>1</mechanicalReduction></actuator>
+    <joint name="fl_castor_wheel"><hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface></joint>
+  </transmission>
+  <transmission name="fr_castor_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="fr_castor_wheel_motor"><mechanicalReduction>1</mechanicalReduction></actuator>
+    <joint name="fr_castor_wheel"><hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface></joint>
+  </transmission>
+  <transmission name="rr_castor_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="rr_castor_wheel_motor"><mechanicalReduction>1</mechanicalReduction></actuator>
+    <joint name="rr_castor_wheel"><hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface></joint>
+  </transmission>
+  <transmission name="rl_castor_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="rl_castor_wheel_motor"><mechanicalReduction>1</mechanicalReduction></actuator>
+    <joint name="rl_castor_wheel"><hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface></joint>
+  </transmission>
+
+  <gazebo>
+    <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+      <robotNamespace>/</robotNamespace>
+    </plugin>
+  </gazebo>
+  <gazebo>
+    <mu1 value="1.0"/>
+    <mu2 value="0.9"/>
+    <kp value="10000000.0"/>
+    <kd value="1.0"/>
+    <fdir1 value="1 0 0"/>
+    <minDepth value="0.001"/>
+    <maxContacts value="64"/>
+  </gazebo>
+  <gazebo>
+    <plugin filename="libgazebo_ros_diff_drive.so" name="differential_drive_controller">
+      <rosDebugLevel>Debug</rosDebugLevel>
+      <robotNamespace>/</robotNamespace>
+      <publishTf>1</publishTf>
+      <alwaysOn>true</alwaysOn>
+      <updateRate>30</updateRate>
+      <legacyMode>true</legacyMode>
+      <leftJoint>left_wheel</leftJoint>
+      <rightJoint>right_wheel</rightJoint>
+      <wheelSeparation>2</wheelSeparation>
+      <wheelDiameter>0.32918</wheelDiameter>
+      <broadcastTF>1</broadcastTF>
+      <publishWheelTF>false</publishWheelTF>
+      <publishWheelJointState>false</publishWheelJointState>
+      <wheelTorque>30</wheelTorque>
+      <wheelAcceleration>1.8</wheelAcceleration>
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryFrame>odom</odometryFrame>
+      <odometryTopic>odom</odometryTopic>
+      <robotBaseFrame>base_link</robotBaseFrame>
+    </plugin>
+  </gazebo>
+
+  <!-- ==================== 底盘上方铝型材：用细圆柱替换 ==================== -->
+  <link name="aluminium_base_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+      <mass value="0.252739239169835"/>
+      <inertia ixx="0.000880444836748547" ixy="0" ixz="0" iyy="0.000884007661098085" iyz="0" izz="7.95242367143988E-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/aluminium/meshes/aluminium_base_link.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.898039215686275 0.917647058823529 0.929411764705882 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+      <geometry>
+        <box size="0.025 0.025 0.20"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="aluminium_2_base_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+      <mass value="0.252739239169835"/>
+      <inertia ixx="0.000880444836748547" ixy="0" ixz="0" iyy="0.000884007661098085" iyz="0" izz="7.95242367143988E-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/aluminium/meshes/aluminium_base_link.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.898039215686275 0.917647058823529 0.929411764705882 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+      <geometry>
+        <box size="0.025 0.025 0.20"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="aluminium_3_base_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+      <mass value="0.252739239169835"/>
+      <inertia ixx="0.000880444836748547" ixy="0" ixz="0" iyy="0.000884007661098085" iyz="0" izz="7.95242367143988E-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/aluminium/meshes/aluminium_base_link.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.898039215686275 0.917647058823529 0.929411764705882 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+      <geometry>
+        <box size="0.025 0.025 0.20"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="aluminium_4_base_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+      <mass value="0.252739239169835"/>
+      <inertia ixx="0.000880444836748547" ixy="0" ixz="0" iyy="0.000884007661098085" iyz="0" izz="7.95242367143988E-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/aluminium/meshes/aluminium_base_link.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.898039215686275 0.917647058823529 0.929411764705882 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+      <geometry>
+        <box size="0.025 0.025 0.20"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- 机械臂安装平台：用 box 替换 -->
+  <link name="urbase_base_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0821499280748119 0 -0.00250008544254768"/>
+      <mass value="0.965960559010444"/>
+      <inertia ixx="0.0122165277186615" ixy="0" ixz="0" iyy="0.0276040033352521" iyz="0" izz="0.0398165064505868"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/second_base/meshes/urbase_base_link.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.08 0 -0.0025"/>
+      <geometry>
+        <box size="0.6 0.4 0.04"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ==================== Jaka ZU5 机械臂部分（核心简化） ==================== -->
+  <link name="jaka_base_link"/>
+  <link name="Link_6_45"/>
+
+  <!-- Link_0：底座，圆柱替代 -->
+  <link name="Link_0">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.00096371 0 0.019555"/>
+      <mass value="4.0392"/>
+      <inertia ixx="0.0048763" ixy="0" ixz="0" iyy="0.0068003" iyz="0" izz="0.010618"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/jaka_zu5_meshes/Link_0.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.84706 0.84706 0.84706 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.06"/>
+      <geometry>
+        <cylinder length="0.2" radius="0.075"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Link_1：肩关节 -->
+  <link name="Link_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0.0033226 -0.001509"/>
+      <mass value="15.135"/>
+      <inertia ixx="0.044302" ixy="0" ixz="0" iyy="0.043091" iyz="0" izz="0.030523"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/jaka_zu5_meshes/Link_1.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.84706 0.84706 0.84706 1"/>
+      </material>
+    </visual>
+    <!-- 肩关节壳体：沿 y 方向延伸到 joint_2 -->
+    <collision>
+      <origin rpy="1.5708 0 0" xyz="0 0.072 0"/>
+      <geometry>
+        <cylinder length="0.25" radius="0.075"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Link_2：大臂（最关键，长 0.43m） -->
+  <link name="Link_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.215 0 -0.14315"/>
+      <mass value="45.847"/>
+      <inertia ixx="0.10377" ixy="0" ixz="0" iyy="1.5964" iyz="0" izz="1.5689"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.14315"/>
+      <geometry>
+        <mesh filename="../meshes/jaka_zu5_meshes/Link_2.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.84706 0.84706 0.84706 1"/>
+      </material>
+    </visual>
+    <!-- 肩转关节壳体（位于 Link_2 原点） -->
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.072"/>
+      <geometry>
+        <cylinder length="0.25" radius="0.075"/>
+      </geometry>
+    </collision>
+    <!-- 大臂主管：沿 x 方向，z=0.14315 高度 -->
+    <collision>
+      <origin rpy="0 1.5708 0" xyz="0.215 0 0.0"/>
+      <geometry>
+        <cylinder length="0.40" radius="0.05"/>
+      </geometry>
+    </collision>
+    <!-- 肘部端关节壳体 -->
+    <collision>
+      <origin rpy="0 0 0" xyz="0.43 0 0"/>
+      <geometry>
+        <cylinder length="0.15" radius="0.06"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Link_3：小臂（长 0.3685m） -->
+  <link name="Link_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.19087 0 -0.010587"/>
+      <mass value="18.069"/>
+      <inertia ixx="0.022066" ixy="0" ixz="0" iyy="0.41632" iyz="0" izz="0.41071"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/jaka_zu5_meshes/Link_3.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.84706 0.84706 0.84706 1"/>
+      </material>
+    </visual>
+    <!-- 肘关节壳体（Link_3 原点处） -->
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.04"/>
+      <geometry>
+        <cylinder length="0.15" radius="0.055"/>
+      </geometry>
+    </collision>
+    <!-- 小臂主管：沿 x 方向 -->
+    <collision>
+      <origin rpy="0 1.5708 0" xyz="0.18 0 0.0"/>
+      <geometry>
+        <cylinder length="0.32" radius="0.04"/>
+      </geometry>
+    </collision>
+    <!-- 腕侧端：joint_4 在 (0.3685, 0, -0.114) -->
+    <collision>
+      <origin rpy="0 0 0" xyz="0.3685 0 "/>
+      <geometry>
+        <cylinder length="0.15" radius="0.045"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Link_4：腕 1 -->
+  <link name="Link_4">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 -0.0058004 0.0026717"/>
+      <mass value="5.5525"/>
+      <inertia ixx="0.0092564" ixy="0" ixz="0" iyy="0.0052251" iyz="0" izz="0.0089683"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/jaka_zu5_meshes/Link_4.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.84706 0.84706 0.84706 1"/>
+      </material>
+    </visual>
+    <!-- 腕 1 壳体：沿 y 方向，joint_5 偏移 -0.1135 -->
+    <collision>
+      <origin rpy="1.5708 0 0" xyz="0 -0.05 0"/>
+      <geometry>
+        <cylinder length="0.20" radius="0.045"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Link_5：腕 2 -->
+  <link name="Link_5">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 -0.0028889 -0.0023424"/>
+      <mass value="6.3339"/>
+      <inertia ixx="0.012993" ixy="0" ixz="0" iyy="0.0058454" iyz="0" izz="0.0127"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/jaka_zu5_meshes/Link_5.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.84706 0.84706 0.84706 1"/>
+      </material>
+    </visual>
+    <!-- 腕 2 壳体：沿 y 方向，joint_6 偏移 0.107 -->
+    <collision>
+      <origin rpy="1.5708 0 0" xyz="0 0.0 0"/>
+      <geometry>
+        <cylinder length="0.12" radius="0.045"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Link_6：腕 3（工具法兰） -->
+  <link name="Link_6">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 -0.021245"/>
+      <mass value="1.4169"/>
+      <inertia ixx="0.00071853" ixy="0" ixz="0" iyy="0.00072375" iyz="0" izz="0.0011337"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/jaka_zu5_meshes/Link_6.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.84706 0.84706 0.84706 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.025"/>
+      <geometry>
+        <cylinder length="0.05" radius="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ==================== 机械臂关节 ==================== -->
+  <joint name="fixed_1" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="jaka_base_link"/>
+    <child link="Link_0"/>
+  </joint>
+  <joint name="fixed_2" type="fixed">
+    <origin rpy="0 0 -0.7854" xyz="0 0 0"/>
+    <parent link="Link_6"/>
+    <child link="Link_6_45"/>
+  </joint>
+
+  <joint name="joint_1" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 0.12015"/>
+    <parent link="Link_0"/>
+    <child link="Link_1"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="2000" lower="-6.28" upper="6.28" velocity="3.14"/>
+  </joint>
+  <joint name="joint_2" type="revolute">
+    <origin rpy="1.5708 0 0" xyz="0 0.14315 0"/>
+    <parent link="Link_1"/>
+    <child link="Link_2"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="5000" lower="-1.48" upper="4.62" velocity="3.14"/>
+  </joint>
+  <joint name="joint_3" type="revolute">
+    <origin rpy="0 0 0" xyz="0.43 0 0.14315"/>
+    <parent link="Link_2"/>
+    <child link="Link_3"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="5000" lower="-3.05" upper="3.05" velocity="3.14"/>
+  </joint>
+  <joint name="joint_4" type="revolute">
+    <origin rpy="0 0 0" xyz="0.3685 -1.185E-05 -0.114"/>
+    <parent link="Link_3"/>
+    <child link="Link_4"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="2000" lower="-1.48" upper="4.62" velocity="3.14"/>
+  </joint>
+  <joint name="joint_5" type="revolute">
+    <origin rpy="1.5708 0 0" xyz="0 -0.1135 0"/>
+    <parent link="Link_4"/>
+    <child link="Link_5"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="3000" lower="-6.28" upper="6.28" velocity="3.14"/>
+  </joint>
+  <joint name="joint_6" type="revolute">
+    <origin rpy="-1.5708 0 0" xyz="0 0.107 0"/>
+    <parent link="Link_5"/>
+    <child link="Link_6"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1000" lower="-6.28" upper="6.28" velocity="3.14"/>
+  </joint>
+
+  <!-- 关节传动 -->
+  <transmission name="trans_joint_1">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_1"><hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface></joint>
+    <actuator name="joint_1_motor"><hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface><mechanicalReduction>1</mechanicalReduction></actuator>
+  </transmission>
+  <transmission name="trans_joint_2">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_2"><hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface></joint>
+    <actuator name="joint_2_motor"><hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface><mechanicalReduction>1</mechanicalReduction></actuator>
+  </transmission>
+  <transmission name="trans_joint_3">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_3"><hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface></joint>
+    <actuator name="joint_3_motor"><hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface><mechanicalReduction>1</mechanicalReduction></actuator>
+  </transmission>
+  <transmission name="trans_joint_4">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_4"><hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface></joint>
+    <actuator name="joint_4_motor"><hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface><mechanicalReduction>1</mechanicalReduction></actuator>
+  </transmission>
+  <transmission name="trans_joint_5">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_5"><hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface></joint>
+    <actuator name="joint_5_motor"><hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface><mechanicalReduction>1</mechanicalReduction></actuator>
+  </transmission>
+  <transmission name="trans_joint_6">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_6"><hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface></joint>
+    <actuator name="joint_6_motor"><hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface><mechanicalReduction>1</mechanicalReduction></actuator>
+  </transmission>
+  <gazebo>
+    <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+      <robotNamespace>/</robotNamespace>
+    </plugin>
+  </gazebo>
+
+  <material name="aluminum"><color rgba="0.5 0.5 0.5 1"/></material>
+  <material name="plastic"><color rgba="0.1 0.1 0.1 1"/></material>
+
+  <!-- ==================== 视觉相机模组 jk_se_vi_200 ==================== -->
+  <link name="jk_se_vi_200_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0.00519325476237179"/>
+      <mass value="0.113976498368271"/>
+      <inertia ixx="5.64946593588005E-05" ixy="0" ixz="0" iyy="5.49156738067512E-05" iyz="0" izz="8.64640542438198E-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.0315"/>
+      <geometry>
+        <mesh filename="../meshes/jk_se_vi_200/meshes/jk_se_vi_200_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name=""><color rgba="1 1 1 1"/></material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.005"/>
+      <geometry>
+        <box size="0.07 0.07 0.07"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="jk_se_vi_200_joint" type="fixed">
+    <origin rpy="0 0 0.785398" xyz="0 0 0.0315 "/>
+    <parent link="Link_6_45"/>
+    <child link="jk_se_vi_200_link"/>
+  </joint>
+
+  <joint name="connector_base_joint" type="fixed">
+    <parent link="jk_se_vi_200_link"/>
+    <child link="connector_base_link"/>
+    <origin rpy="0 -1.57 0.78" xyz="-0.0315 -0.0315 0"/>
+  </joint>
+  <link name="connector_base_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.00434937212978377 0 0.0334255512696373"/>
+      <mass value="0.00891029041853838"/>
+      <inertia ixx="3.67875098397923E-06" ixy="0" ixz="0" iyy="3.27524790321564E-06" iyz="0" izz="8.06494585207849E-07"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/connector_description/meshes/base_link.STL"/>
+      </geometry>
+      <material name=""><color rgba="0 0 0 1"/></material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.005 0 0.035"/>
+      <geometry>
+        <box size="0.04 0.04 0.07"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="to_d435_link"/>
+  <joint name="to_d435_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0152 0 0.0445"/>
+    <parent link="connector_base_link"/>
+    <child link="to_d435_link"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+
+  <joint name="camera_1_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="to_d435_link"/>
+    <child link="camera_1_bottom_screw_frame"/>
+  </joint>
+  <link name="camera_1_bottom_screw_frame"/>
+  <joint name="camera_link_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.010600000000000002 0.0175 0.0125"/>
+    <parent link="camera_1_bottom_screw_frame"/>
+    <child link="camera_link"/>
+  </joint>
+  <link name="camera_link">
+    <visual>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0.0043 -0.0175 0"/>
+      <geometry>
+        <mesh filename="../meshes/realsense2_description/meshes/d435.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 -0.0175 0"/>
+      <geometry>
+        <box size="0.02505 0.09 0.025"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.072"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.003881243" ixy="0.0" ixz="0.0" iyy="0.000498940" iyz="0.0" izz="0.003879257"/>
+    </inertial>
+  </link>
+
+  <!-- ==================== 末端夹爪 DH AG95 ==================== -->
+  <link name="gripper_center_link"/>
+  <joint name="gripper_center_joint" type="fixed">
+    <origin rpy="0 0 -0.785398" xyz="0 0 0.225 "/>
+    <parent link="jk_se_vi_200_link"/>
+    <child link="gripper_center_link"/>
+  </joint>
+
+  <joint name="gripper_base_joint" type="fixed">
+    <parent link="jk_se_vi_200_link"/>
+    <child link="gripper_base_link"/>
+    <origin rpy="0 0 -0.7853" xyz="0 0 0.005"/>
+  </joint>
+  <link name="gripper_base_link">
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/dh_robotics_ag95_description/meshes/visual/dh_base_link.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name=""><color rgba="0.84706 0.84706 0.84706 1"/></material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.05"/>
+      <geometry>
+        <box size="0.075 0.045 0.10"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.83416"/>
+      <origin xyz="0.0 0.0 0.0"/>
+      <inertia ixx="0.0013016" ixy="0" ixz="0" iyy="0.00049972" iyz="0" izz="0.001498"/>
+    </inertial>
+  </link>
+  <gazebo reference="gripper_base_link">
+    <implicitSpringDamper>1</implicitSpringDamper>
+    <mu1>100000</mu1><mu2>100000</mu2>
+    <kp>100000000.0</kp><kd>1.0</kd>
+  </gazebo>
+
+  <!-- 夹爪指节：用小 box 替代 -->
+  <joint name="gripper_finger1_joint" type="fixed">
+    <parent link="gripper_base_link"/>
+    <child link="gripper_finger1_knuckle_link"/>
+    <axis xyz="0 -1 0"/>
+    <origin rpy="0.0 0.0 3.141592653589793" xyz="-0.016 0 0.10586"/>
+    <limit effort="1000" lower="0.0" upper="0.65" velocity="2.0"/>
+  </joint>
+  <joint name="gripper_finger2_joint" type="fixed">
+    <parent link="gripper_base_link"/>
+    <child link="gripper_finger2_knuckle_link"/>
+    <axis xyz="0 -1 0"/>
+    <origin rpy="0.0 0.0 0.0" xyz="0.016  0 0.10586 "/>
+    <limit effort="1000" lower="-3.14" upper="3.14" velocity="100.0"/>
+    <mimic joint="gripper_finger1_joint"/>
+  </joint>
+  <link name="gripper_finger1_knuckle_link">
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/dh_robotics_ag95_description/meshes/visual/crank_Link.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name=""><color rgba="0.84706 0.84706 0.84706 1"/></material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.015 0 -0.011"/>
+      <geometry>
+        <box size="0.04 0.015 0.025"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.011111"/>
+      <origin xyz="0.0 0.0 0.0"/>
+      <inertia ixx="3.88172e-06" ixy="0" ixz="0" iyy="1.92174e-06" iyz="0" izz="4.32374e-06"/>
+    </inertial>
+  </link>
+  <link name="gripper_finger2_knuckle_link">
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/dh_robotics_ag95_description/meshes/visual/crank_Link.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name=""><color rgba="0.84706 0.84706 0.84706 1"/></material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.015 0 -0.011"/>
+      <geometry>
+        <box size="0.04 0.015 0.025"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.011111"/>
+      <origin xyz="0.0 0.0 0.0"/>
+      <inertia ixx="3.88172e-06" ixy="0" ixz="0" iyy="1.92174e-06" iyz="0" izz="4.32374e-06"/>
+    </inertial>
+  </link>
+
+  <joint name="gripper_finger1_finger_joint" type="fixed">
+    <parent link="gripper_finger1_knuckle_link"/>
+    <child link="gripper_finger1_finger_link"/>
+    <axis xyz="0 -1 0"/>
+    <origin rpy="0 0 0" xyz="0.0292080077784 0.0 -0.0227132622407"/>
+    <limit effort="0.1" lower="-3.14" upper="3.14" velocity="100.0"/>
+    <mimic joint="gripper_finger1_joint" multiplier="0.4563942" offset="0"/>
+  </joint>
+  <joint name="gripper_finger2_finger_joint" type="fixed">
+    <parent link="gripper_finger2_knuckle_link"/>
+    <child link="gripper_finger2_finger_link"/>
+    <axis xyz="0 -1 0"/>
+    <origin rpy="0 0 0" xyz="0.0292080077784 0.0 -0.0227132622407"/>
+    <limit effort="0.1" lower="-3.14" upper="3.14" velocity="100.0"/>
+    <mimic joint="gripper_finger1_joint" multiplier="0.4563942" offset="0"/>
+  </joint>
+  <link name="gripper_finger1_finger_link">
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/dh_robotics_ag95_description/meshes/visual/rod_Link.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name=""><color rgba="0.84706 0.84706 0.84706 1"/></material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.005 0 -0.012"/>
+      <geometry>
+        <box size="0.025 0.012 0.04"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.0222871"/>
+      <origin xyz="0.0 0.0 0.0"/>
+      <inertia ixx="8.72836e-06" ixy="0" ixz="0" iyy="7.26157e-06" iyz="0" izz="3.3425e-06"/>
+    </inertial>
+  </link>
+  <link name="gripper_finger2_finger_link">
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/dh_robotics_ag95_description/meshes/visual/rod_Link.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name=""><color rgba="0.84706 0.84706 0.84706 1"/></material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.005 0 -0.012"/>
+      <geometry>
+        <box size="0.025 0.012 0.04"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.0222871"/>
+      <origin xyz="0.0 0.0 0.0"/>
+      <inertia ixx="8.72836e-06" ixy="0" ixz="0" iyy="7.26157e-06" iyz="0" izz="3.3425e-06"/>
+    </inertial>
+  </link>
+
+  <joint name="gripper_finger1_inner_knuckle_joint" type="fixed">
+    <parent link="gripper_base_link"/>
+    <child link="gripper_finger1_inner_knuckle_link"/>
+    <axis xyz="0 -1 0"/>
+    <origin rpy="0.0 0.0 3.141592653589793" xyz="-0.016 0 0.10586"/>
+    <limit effort="0.1" lower="-3.14" upper="3.14" velocity="100.0"/>
+    <mimic joint="gripper_finger1_joint" multiplier="1.49462955" offset="0"/>
+  </joint>
+  <joint name="gripper_finger2_inner_knuckle_joint" type="fixed">
+    <parent link="gripper_base_link"/>
+    <child link="gripper_finger2_inner_knuckle_link"/>
+    <axis xyz="0 -1 0"/>
+    <origin rpy="0.0 0.0 0.0" xyz="0.016 0 0.10586"/>
+    <limit effort="0.1" lower="-3.14" upper="3.14" velocity="100.0"/>
+    <mimic joint="gripper_finger1_joint" multiplier="1.49462955" offset="0"/>
+  </joint>
+  <link name="gripper_finger1_inner_knuckle_link">
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/dh_robotics_ag95_description/meshes/visual/proximal_phalanx_Link.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name=""><color rgba="0.84706 0.84706 0.84706 1"/></material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.020 0 0.019"/>
+      <geometry>
+        <box size="0.055 0.018 0.025"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.0318004"/>
+      <origin xyz="0.0 0.0 0.0"/>
+      <inertia ixx="1.39848e-05" ixy="0" ixz="0" iyy="1.04943e-05" iyz="0" izz="1.36183e-05"/>
+    </inertial>
+  </link>
+  <link name="gripper_finger2_inner_knuckle_link">
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/dh_robotics_ag95_description/meshes/visual/proximal_phalanx_Link.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name=""><color rgba="0.84706 0.84706 0.84706 1"/></material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.020 0 0.019"/>
+      <geometry>
+        <box size="0.055 0.018 0.025"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.0318004"/>
+      <origin xyz="0.0 0.0 0.0"/>
+      <inertia ixx="1.39848e-05" ixy="0" ixz="0" iyy="1.04943e-05" iyz="0" izz="1.36183e-05"/>
+    </inertial>
+  </link>
+
+  <joint name="gripper_finger1_finger_tip_joint" type="fixed">
+    <parent link="gripper_finger1_inner_knuckle_link"/>
+    <child link="gripper_finger1_finger_tip_link"/>
+    <axis xyz="0 1 0"/>
+    <origin rpy="0.0 0.0 0.0" xyz="0.0394969463769 0.0 0.0382752038125 "/>
+    <limit effort="0.1" lower="-3.14" upper="3.14" velocity="100.0"/>
+    <mimic joint="gripper_finger1_joint" multiplier="1.49462955"/>
+  </joint>
+  <joint name="gripper_finger2_finger_tip_joint" type="fixed">
+    <parent link="gripper_finger2_inner_knuckle_link"/>
+    <child link="gripper_finger2_finger_tip_link"/>
+    <axis xyz="0 1 0"/>
+    <origin rpy="0.0 0.0 0.0" xyz="0.0394969463769  0.0 0.0382752038125  "/>
+    <limit effort="0.1" lower="-3.14" upper="3.14" velocity="100.0"/>
+    <mimic joint="gripper_finger1_joint" multiplier="1.49462955"/>
+  </joint>
+  <link name="gripper_finger1_finger_tip_link">
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/dh_robotics_ag95_description/meshes/visual/distal_phalanx_Link.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name=""><color rgba="0.84706 0.84706 0.84706 1"/></material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.005 0 0.015"/>
+      <geometry>
+        <box size="0.025 0.018 0.045"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.0124305"/>
+      <origin xyz="0.0 0.0 0.0"/>
+      <inertia ixx="2.84217e-06" ixy="0" ixz="0" iyy="3.03961e-06" iyz="0" izz="1.11815e-06"/>
+    </inertial>
+  </link>
+  <link name="gripper_finger2_finger_tip_link">
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/dh_robotics_ag95_description/meshes/visual/distal_phalanx_Link.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name=""><color rgba="0.84706 0.84706 0.84706 1"/></material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.005 0 0.015"/>
+      <geometry>
+        <box size="0.025 0.018 0.045"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.0124305"/>
+      <origin xyz="0.0 0.0 0.0"/>
+      <inertia ixx="2.84217e-06" ixy="0" ixz="0" iyy="3.03961e-06" iyz="0" izz="1.11815e-06"/>
+    </inertial>
+  </link>
+
+  <transmission name="gripper_finger1_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="gripper_finger1_joint"><hardwareInterface>PositionJointInterface</hardwareInterface></joint>
+    <actuator name="gripper_finger1_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+  <gazebo>
+    <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="mimic_dh_robotics_ag95_1">
+      <joint>gripper_finger1_joint</joint><mimicJoint>gripper_finger2_joint</mimicJoint>
+      <multiplier>1.0</multiplier><offset>0.0</offset>
+    </plugin>
+    <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="mimic_dh_robotics_ag95_2">
+      <joint>gripper_finger1_joint</joint><mimicJoint>gripper_finger2_inner_knuckle_joint</mimicJoint>
+      <multiplier>1.49462955</multiplier><offset>0.0</offset>
+    </plugin>
+    <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="mimic_dh_robotics_ag95_3">
+      <joint>gripper_finger1_joint</joint><mimicJoint>gripper_finger1_inner_knuckle_joint</mimicJoint>
+      <multiplier>1.49462955</multiplier><offset>0.0</offset>
+    </plugin>
+    <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="mimic_dh_robotics_ag95_4">
+      <joint>gripper_finger1_joint</joint><mimicJoint>gripper_finger1_finger_tip_joint</mimicJoint>
+      <multiplier>1.49462955</multiplier><offset>0.0</offset>
+    </plugin>
+    <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="mimic_dh_robotics_ag95_5">
+      <joint>gripper_finger1_joint</joint><mimicJoint>gripper_finger2_finger_tip_joint</mimicJoint>
+      <multiplier>1.49462955</multiplier><offset>0.0</offset>
+    </plugin>
+    <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="mimic_dh_robotics_ag95_6">
+      <joint>gripper_finger1_joint</joint><mimicJoint>gripper_finger1_finger_joint</mimicJoint>
+      <multiplier>0.4563942</multiplier><offset>0.0</offset>
+    </plugin>
+    <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="mimic_dh_robotics_ag95_7">
+      <joint>gripper_finger1_joint</joint><mimicJoint>gripper_finger2_finger_joint</mimicJoint>
+      <multiplier>0.4563942</multiplier><offset>0.0</offset>
+    </plugin>
+  </gazebo>
+
+  <!-- ==================== 底盘装配关节 ==================== -->
+  <joint name="tracer_aluminium" type="fixed">
+    <origin rpy="0 0 1.57" xyz="-0.142 0.115 0.016 "/>
+    <parent link="base_link"/>
+    <child link="aluminium_base_link"/>
+  </joint>
+  <joint name="tracer_aluminium_2" type="fixed">
+    <origin rpy="0 0 1.57" xyz="-0.142 -0.115 0.016 "/>
+    <parent link="base_link"/>
+    <child link="aluminium_2_base_link"/>
+  </joint>
+  <joint name="tracer_aluminium_3" type="fixed">
+    <origin rpy="0 0 1.57" xyz="0.145 0.115 0.016 "/>
+    <parent link="base_link"/>
+    <child link="aluminium_3_base_link"/>
+  </joint>
+  <joint name="tracer_aluminium_4" type="fixed">
+    <origin rpy="0 0 1.57" xyz="0.145 -0.115 0.016 "/>
+    <parent link="base_link"/>
+    <child link="aluminium_4_base_link"/>
+  </joint>
+  <joint name="tracer_base" type="fixed">
+    <origin rpy="0 0 1.57" xyz="0 0 0.218 "/>
+    <parent link="base_link"/>
+    <child link="urbase_base_link"/>
+  </joint>
+
+  <link name="base_footprint"/>
+  <joint name="base_footprint_to_base_link" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin rpy="0 0 0" xyz="0 0 0.136"/>
+  </joint>
+  <joint name="base_to_jaka" type="fixed">
+    <parent link="base_link"/>
+    <child link="jaka_base_link"/>
+    <origin rpy="-0.02 0 0" xyz="0 0 0.221"/>
+  </joint>
+
+</robot>

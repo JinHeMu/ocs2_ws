@@ -1,0 +1,24 @@
+tracer_jaka_trajectory_target_node:
+  ros__parameters:
+    robot_name: "mobile_manipulator"
+    input_dim: 8
+
+    marker_frame: "odom"
+    ee_frame: "tool0"
+
+    publish_rate: 10.0
+    horizon: 3.0
+    knot_dt: 0.10
+    reference_delay: 0.05
+
+    radius: 2.0
+    period: 12.0
+    z_amplitude: 0.00
+    cycles: 1.0
+    loop: false
+
+    workspace_z_min: 0.05
+    workspace_z_max: 1.20
+    workspace_radius_max: 1.50
+
+    preview_path_topic: "trajectory_target_preview"
