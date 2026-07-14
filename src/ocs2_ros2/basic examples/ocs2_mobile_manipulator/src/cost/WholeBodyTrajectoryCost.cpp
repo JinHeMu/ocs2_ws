@@ -2,7 +2,7 @@
  * WholeBodyTrajectoryCost.cpp
  *****************************************************************************/
 
-#include "ocs2_mobile_manipulator/constraint/WholeBodyTrajectoryCost.h"
+#include "ocs2_mobile_manipulator/cost/WholeBodyTrajectoryCost.h"
 
 #include <cmath>
 #include <stdexcept>

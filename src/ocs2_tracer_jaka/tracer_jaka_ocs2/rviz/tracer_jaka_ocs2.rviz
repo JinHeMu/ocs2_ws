@@ -7,6 +7,11 @@ Panels:
         - /Global Options1
         - /Status1
         - /Grid1
+        - /RobotModel1
+        - /RobotModel1/Links1
+        - /RobotModel1/Links1/base_link1
+        - /RobotModel1/Links1/fl_wheel_link1
+        - /TF1/Tree1
         - /TargetPose1
         - /InteractiveMarkers1
         - /Path1
@@ -129,7 +134,7 @@ Visualization Manager:
         base_link:
           Alpha: 1
           Show Axes: false
-          Show Trail: false
+          Show Trail: true
           Value: true
         d435i_link:
           Alpha: 1
@@ -225,7 +230,7 @@ Visualization Manager:
       Enabled: false
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
       Marker Scale: 0.5
       Name: TF
       Show Arrows: true
@@ -463,7 +468,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 7.5511932373046875
+      Distance: 1.6260473728179932
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -478,10 +483,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.1450004577636719
+      Pitch: 0.800001323223114
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
-      Yaw: 5.018179893493652
+      Yaw: 3.8381731510162354
     Saved: ~
 Window Geometry:
   Displays:
@@ -491,7 +496,7 @@ Window Geometry:
   Hide Right Dock: false
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000001f70000066afc0200000004fb000000100044006900730070006c006100790073010000006e000003910000018200fffffffb0000000a00560069006500770073010000040b000002cd0000013200fffffffb0000000a0049006d0061006700650200000a16000004c4000001f7000000ebfb0000000a0049006d0061006700650200000a16000005ac000001f7000000eb0000073b0000066a00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000003640000066afc0200000004fb000000100044006900730070006c006100790073010000006e000003910000018200fffffffb0000000a00560069006500770073010000040b000002cd0000013200fffffffb0000000a0049006d0061006700650200000a16000004c4000001f7000000ebfb0000000a0049006d0061006700650200000a16000005ac000001f7000000eb000005ce0000066a00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
   Width: 2366

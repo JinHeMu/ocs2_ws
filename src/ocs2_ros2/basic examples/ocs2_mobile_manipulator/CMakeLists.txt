@@ -34,7 +34,7 @@ add_library(${PROJECT_NAME}
         src/dynamics/FullyActuatedFloatingArmManipulatorDynamics.cpp
         src/MobileManipulatorInterface.cpp
         
-        src/constraint/WholeBodyTrajectoryCost.cpp   # <-- add this line
+        src/cost/WholeBodyTrajectoryCost.cpp   # <-- add this line
 )
 
 target_include_directories(${PROJECT_NAME}
