@@ -159,8 +159,11 @@ namespace ocs2::mobile_manipulator
                                                                      const std::string& taskFile,
                                                                      const std::string& prefix);
 
-        // 
-        std::unique_ptr<StateCost> getWholeBodyTrajectoryCost(const std::string& taskFile);
+
+                /** 全身轨迹跟踪 cost, 参考来自 ROS 发布的 TargetTrajectories */
+        std::unique_ptr<StateCost> getWholeBodyTrajectoryCost(const std::string& taskFile,
+                                                            const std::string& prefix,
+                                                            bool isFinal);
 
         void loadInitialObstacles(const std::string& taskFile, const std::string& prefix);
 
@@ -202,5 +205,8 @@ namespace ocs2::mobile_manipulator
         bool envCollisionEnabled_ = false;
 
         vector_t initialState_;
+
+        bool endEffectorEnabled_{true};
+        bool wholeBodyTrackingEnabled_{false};
     };
 }

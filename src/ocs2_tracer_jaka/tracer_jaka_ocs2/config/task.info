@@ -169,41 +169,60 @@ inputCost
   }
 }
 
-; 全身轨迹跟踪时建议把 EE 约束权重设为 0 (或很小),
-; 否则 EE 约束会把机器人拽向 MRT 启动时锁定的初始末端位姿, 与轨迹跟踪冲突。
-; 若想恢复 EE 目标跟踪模式, 把下面权重改回 10.0 / 5.0 并把 wholeBodyTracking.activate 设为 false。
+; ============================================================================
+; End-effector 目标跟踪 (全身轨迹模式下必须关闭)
+;
+; 注意: 只把 muPosition / muOrientation 设成 0 是不够的!
+; 只要 EndEffectorConstraint 还挂在 problem 上, 它就会去解析
+; TargetTrajectories.stateTrajectory 的 head<3>() 和 tail<4>();
+; 而全身轨迹的 state 是 9 维 [x, y, yaw, q1..q6],
+; tail<4>() 取到的是 q3..q6, 被当成四元数使用 -> 语义完全错误。
+; 所以这里用 activate 把 constraint 整个从 problem 里摘掉。
+;
+; 若要切回 EE 目标模式:
+;   endEffector.activate      -> true  (并恢复 muPosition/muOrientation)
+;   finalEndEffector 权重      -> 恢复
+;   wholeBodyTracking.activate -> false
+;   MRT 节点参数 use_whole_body_target -> false
+; ============================================================================
 endEffector
 {
-  muPosition       0.0   ; was 10.0
-  muOrientation    0.0   ; was 5.0
+  activate         false
+
+  muPosition       10.0
+  muOrientation    5.0
 }
 
 finalEndEffector
 {
-  muPosition       0.0   ; was 10.0
-  muOrientation    0.0   ; was 5.0
+  muPosition       10.0
+  muOrientation    5.0
 }
 
 ; ============================================================================
-; 全身轨迹跟踪软约束 (WholeBodyTrajectoryCost)
-;   L(x,t) = 0.5 * (x - x_d(t))' Q (x - x_d(t)),  yaw 误差自动 wrap
-;   x = [x, y, yaw, q1..q6]  (9 维)
+; 全身轨迹跟踪 cost (WholeBodyTrajectoryCost)
+;
+;   L(x,t) = 0.5 * (x - x_d(t))' Q (x - x_d(t)),  yaw 误差自动 wrap 到 [-pi, pi]
+;   x     = [x, y, yaw, q1..q6]                    (stateDim = 9)
+;   x_d(t) 来自 ROS topic mobile_manipulator_mpc_target 里的 TargetTrajectories,
+;          由 whole_body_trajectory_target_node 发布, 经 RosReferenceManager 传入。
+;
+; 与旧版的区别: 不再从 task 文件读 waypoints, 轨迹完全在运行时由 ROS 提供。
 ; ============================================================================
 wholeBodyTracking
 {
   activate   true
 
-  ; 轨迹整体时间偏移 [s]: 轨迹在 MPC 时钟 startTime 时刻开始
-  ; (MRT 节点进入控制循环时 MPC 时钟约为 0)
-  startTime  0.0
+  ; 终端 cost 的权重缩放 (相对中间时刻 Q)
+  finalWeightScale  1e-1
 
   ; 状态偏差权重 (对角)
   Q
   {
     base
     {
-      (0,0)  10.0   ; x  [m]
-      (1,1)  10.0   ; y  [m]
+      (0,0)  10.0   ; x   [m]
+      (1,1)  10.0   ; y   [m]
       (2,2)   4.0   ; yaw [rad]
     }
     arm
@@ -216,34 +235,6 @@ wholeBodyTracking
       (5,5)  2.0    ; joint_6
     }
   }
-
-  ; --------------------------------------------------------------------------
-  ; 可选: 手写航点。若注释掉整个 waypoints 块, 代码会自动生成一条默认示例轨迹:
-  ;   半径 2 m 的缓弧 (v=0.15 m/s, w=0.075 rad/s, 20 s), 机械臂保持 initialState.arm。
-  ; 每个航点: time [s] + state (9 维: x, y, yaw, q1..q6)。
-  ; time 必须严格递增; yaw 建议写成连续值 (不 wrap), 保证线性插值正确。
-  ; --------------------------------------------------------------------------
-  ; waypoints
-  ; {
-  ;   [0]
-  ;   {
-  ;     time 0.0
-  ;     state { [0] 0.0  [1] 0.0  [2] 0.0
-  ;             [3] -0.515 [4] 1.5707 [5] -1.5707 [6] 1.5707 [7] 1.5707 [8] 0.254 }
-  ;   }
-  ;   [1]
-  ;   {
-  ;     time 10.0
-  ;     state { [0] 1.0  [1] 0.0  [2] 0.0
-  ;             [3] -0.515 [4] 1.5707 [5] -1.5707 [6] 1.5707 [7] 1.5707 [8] 0.254 }
-  ;   }
-  ;   [2]
-  ;   {
-  ;     time 20.0
-  ;     state { [0] 2.0  [1] 0.5  [2] 0.5236
-  ;             [3] 0.0 [4] 1.5707 [5] -1.5707 [6] 1.5707 [7] 1.5707 [8] 0.254 }
-  ;   }
-  ; }
 }
 
 selfCollision

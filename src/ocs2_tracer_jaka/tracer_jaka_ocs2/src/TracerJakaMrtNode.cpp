@@ -8,7 +8,9 @@
 //                      false          -> 发布 Twist        (实机 tracer_base_ros)
 //
 //  其余设计点 (沿用上一版):
-//   * 初始 target = 当前 EE 位姿 (TF 查询), MPC 一开始就保持原位
+//   * 初始 target (use_whole_body_target=true, 默认) = 当前全身状态 (stateDim 维),
+//     MPC 一开始就"保持当前构型", 等待 whole_body_trajectory_target_node 发来全身轨迹
+//   * use_whole_body_target=false 时退回旧行为: 初始 target = 当前 EE 位姿 (7 维)
 //   * JTC 轨迹只发 position, 不发 velocity, 避开 "last point velocity != 0" 拒收
 //   * 单点轨迹 (1 个 point @ traj_horizon ahead), 避免 currentTime > plan_end
 //   * MRT 用独立 internal node, 不跟主 node 抢 executor
@@ -19,6 +21,7 @@
 #include <chrono>
 #include <memory>
 #include <mutex>
+#include <sstream>
 #include <string>
 #include <thread>
 #include <vector>
@@ -101,6 +104,9 @@ class TracerJakaMrtBridge : public rclcpp::Node {
     declare_parameter<std::string>("base_frame",  "base_footprint");
     declare_parameter<std::string>("world_frame", "odom");
     declare_parameter<std::string>("ee_frame",    "tool0");
+    // *** new ***: true  -> 初始 target = 当前全身状态 (stateDim 维), 配合 WholeBodyTrajectoryCost
+    //              false -> 初始 target = 当前 EE 位姿 (7 维),      配合 EndEffectorConstraint
+    declare_parameter<bool>("use_whole_body_target", true);
 
     taskFile_       = get_parameter("taskFile").as_string();
     libFolder_      = get_parameter("libFolder").as_string();
@@ -112,6 +118,7 @@ class TracerJakaMrtBridge : public rclcpp::Node {
     worldFrame_     = get_parameter("world_frame").as_string();
     eeFrame_        = get_parameter("ee_frame").as_string();
     useStampedCmd_  = get_parameter("use_stamped_cmd").as_bool();
+    useWholeBodyTarget_ = get_parameter("use_whole_body_target").as_bool();
 
     armQ_.assign(armJointNames_.size(), 0.0);
 
@@ -200,16 +207,41 @@ class TracerJakaMrtBridge : public rclcpp::Node {
       fillStateLocked(initObs.state);
     }
 
-    // ---- 初始 target = 当前末端位姿 (通过 TF), 让 MPC "保持原位" ----
-    const ocs2::vector_t initEEPose = lookupCurrentEEPose();
-    RCLCPP_INFO(get_logger(),
-                "Initial EE target  pos=(%.3f, %.3f, %.3f)  quat=(%.3f, %.3f, %.3f, %.3f)",
-                initEEPose(0), initEEPose(1), initEEPose(2),
-                initEEPose(3), initEEPose(4), initEEPose(5), initEEPose(6));
+    // ------------------------------------------------------------------
+    // ---- 初始 target ----
+    //
+    // *** 全身轨迹模式的关键修改 ***
+    //
+    // 旧版: initTarget = 当前 EE 位姿 (7 维), 由 EndEffectorConstraint 解读。
+    // 新版: initTarget = 当前全身状态 (stateDim 维), 由 WholeBodyTrajectoryCost 解读,
+    //       语义是 "保持当前构型不动"。
+    //
+    // 如果这里仍然发 7 维 EE pose, 那么在真正的全身轨迹到来之前,
+    // WholeBodyTrajectoryCost 会因为维度不匹配而临时失效 (退化为 0 cost),
+    // 机器人在这段时间里没有任何跟踪目标。
+    // ------------------------------------------------------------------
+    if (useWholeBodyTarget_) {
+      ocs2::TargetTrajectories initTargetTrajectories(
+          {0.0}, {initObs.state}, {ocs2::vector_t::Zero(inputDim_)});
+      mrt_->resetMpcNode(initTargetTrajectories);
 
-    ocs2::TargetTrajectories initTargetTrajectories(
-        {0.0}, {initEEPose}, {ocs2::vector_t::Zero(inputDim_)});
-    mrt_->resetMpcNode(initTargetTrajectories);
+      std::stringstream ss;
+      ss << initObs.state.transpose();
+      RCLCPP_INFO(get_logger(),
+                  "Initial whole-body target (stay in place): [%s]",
+                  ss.str().c_str());
+    } else {
+      // 兼容旧的 EE target 模式 (需要 task.info 里 endEffector.activate = true)
+      const ocs2::vector_t initEEPose = lookupCurrentEEPose();
+      RCLCPP_INFO(get_logger(),
+                  "Initial EE target  pos=(%.3f, %.3f, %.3f)  quat=(%.3f, %.3f, %.3f, %.3f)",
+                  initEEPose(0), initEEPose(1), initEEPose(2),
+                  initEEPose(3), initEEPose(4), initEEPose(5), initEEPose(6));
+
+      ocs2::TargetTrajectories initTargetTrajectories(
+          {0.0}, {initEEPose}, {ocs2::vector_t::Zero(inputDim_)});
+      mrt_->resetMpcNode(initTargetTrajectories);
+    }
 
     RCLCPP_INFO(get_logger(), "Waiting for first MPC policy ...");
     while (rclcpp::ok() && !mrt_->initialPolicyReceived()) {
@@ -396,6 +428,7 @@ class TracerJakaMrtBridge : public rclcpp::Node {
   std::string baseFrame_, worldFrame_, eeFrame_;
   double mrtRate_{100.0}, trajHorizon_{0.05};
   bool   useStampedCmd_{true};
+  bool   useWholeBodyTarget_{true};
   std::vector<std::string> armJointNames_;
 
   std::unique_ptr<ocs2::mobile_manipulator::MobileManipulatorInterface> interface_;

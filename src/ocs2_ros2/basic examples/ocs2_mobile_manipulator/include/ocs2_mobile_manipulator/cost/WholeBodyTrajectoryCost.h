@@ -1,25 +1,27 @@
 /******************************************************************************
  * WholeBodyTrajectoryCost.h
  *
- * 全身轨迹跟踪软约束 (以二次型 StateCost 实现)。
+ * 全身轨迹跟踪 StateCost:
  *
- * 内部持有一条时间参数化的全身参考轨迹 x_d(t):
- *   x_d(t) = [x, y, yaw, q_1 ... q_n]^T   (WheelBased: 3 + armDim 维)
+ *   L(x, t) = 0.5 * (x - x_d(t))^T Q (x - x_d(t))
  *
- * 代价:
- *   L(x, t) = 0.5 * e^T Q e,   e = x - x_d(t)  (yaw 分量做角度 wrap)
+ *   x_d(t) 直接来自 OCS2 传进来的 TargetTrajectories (即 ReferenceManager 里
+ *   由 ROS topic <robot_name>_mpc_target 更新的那一份)。
  *
- * 特点:
- *  - 解析梯度 / Hessian (dL/dx = Q e, d2L/dx2 = Q), 无需 CppAd, 无需重编译库
- *  - 轨迹用 ocs2::LinearInterpolation 插值, 查询时间超出范围时钳位到端点
- *    (即 t > t_end 后 MPC 自动 "保持在终点状态")
- *  - 作为软约束加入 OptimalControlProblem::stateCostPtr, 不影响硬约束结构
+ * 关键设计:
+ *   1. 不持有 ReferenceManager 指针。StateCost 接口本身就把 TargetTrajectories
+ *      作为形参传进来, 由 solver 在 preSolverRun() 之后统一切换, 天然线程安全。
+ *   2. stateTrajectory 的每个元素必须是 stateDim 维 (例如 9 = [x, y, yaw, q1..q6])。
+ *      若维度不匹配 (例如仍然是旧的 7 维 EE pose), 本 cost 自动退化为 0,
+ *      而不是抛异常把 MPC 线程打死。
+ *   3. yaw 分量: 插值走最短角路径, 误差做 wrap 到 [-pi, pi]。
  *****************************************************************************/
 
 #pragma once
 
 #include <ocs2_core/Types.h>
 #include <ocs2_core/cost/StateCost.h>
+#include <ocs2_core/reference/TargetTrajectories.h>
 
 namespace ocs2 {
 namespace mobile_manipulator {
@@ -27,20 +29,15 @@ namespace mobile_manipulator {
 class WholeBodyTrajectoryCost final : public StateCost {
  public:
   /**
-   * @param Q               状态偏差权重矩阵 (stateDim x stateDim, 通常取对角)
-   * @param timeTrajectory  航点时间序列 (严格递增, 单位 s, MPC 时钟)
-   * @param stateTrajectory 航点全身状态序列 (每个 stateDim 维)
-   * @param yawIndex        状态向量中航向角的下标 (WheelBased 模型为 2);
-   *                        传入 <0 表示状态中没有需要 wrap 的角度分量
+   * @param Q             stateDim x stateDim 的权重矩阵
+   * @param yawIndex      底盘 yaw 在 state 中的下标; 无 yaw 时传 -1
+   * @param fallbackState 当 TargetTrajectories 为空时使用的参考 (一般是 initialState)
    */
-  WholeBodyTrajectoryCost(matrix_t Q, scalar_array_t timeTrajectory,
-                          vector_array_t stateTrajectory, int yawIndex = 2);
+  WholeBodyTrajectoryCost(matrix_t Q, int yawIndex, vector_t fallbackState);
 
   ~WholeBodyTrajectoryCost() override = default;
 
-  WholeBodyTrajectoryCost* clone() const override {
-    return new WholeBodyTrajectoryCost(*this);
-  }
+  WholeBodyTrajectoryCost* clone() const override;
 
   scalar_t getValue(scalar_t time, const vector_t& state,
                     const TargetTrajectories& targetTrajectories,
@@ -51,19 +48,23 @@ class WholeBodyTrajectoryCost final : public StateCost {
       const TargetTrajectories& targetTrajectories,
       const PreComputation& preComputation) const override;
 
-  /** 查询 t 时刻的期望全身状态 (线性插值, 端点钳位) */
-  vector_t getDesiredState(scalar_t time) const;
-
  private:
-  WholeBodyTrajectoryCost(const WholeBodyTrajectoryCost& rhs) = default;
+  WholeBodyTrajectoryCost(const WholeBodyTrajectoryCost& other) = default;
 
-  /** e = x - x_d(t), 其中 yaw 分量 wrap 到 (-pi, pi] */
-  vector_t computeError(scalar_t time, const vector_t& state) const;
+  /** 把角度 wrap 到 [-pi, pi] */
+  static scalar_t wrapToPi(scalar_t angle);
+
+  /**
+   * 在 targetTrajectories 中按时间插值出期望全身状态。
+   * 越界时钳位到首 / 末航点。
+   * 若 target 维度非法, 返回一个 size()==0 的空向量, 调用方据此关闭 cost。
+   */
+  vector_t getDesiredState(scalar_t time,
+                           const TargetTrajectories& targetTrajectories) const;
 
   matrix_t Q_;
-  scalar_array_t timeTrajectory_;
-  vector_array_t stateTrajectory_;
-  int yawIndex_;
+  int      yawIndex_{-1};
+  vector_t fallbackState_;
 };
 
 }  // namespace mobile_manipulator

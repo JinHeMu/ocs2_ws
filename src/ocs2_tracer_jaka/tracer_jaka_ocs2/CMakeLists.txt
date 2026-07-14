@@ -139,11 +139,11 @@ target_link_libraries(tracer_jaka_trajectory_target_node
   Boost::log_setup
 )
 
-add_executable(tracer_jaka_rectangle_trajectory_target_node
-  src/tracer_jaka_rectangle_trajectory_target_node.cpp
+add_executable(tracer_jaka_whole_body_trajectory_node
+  src/tracer_jaka_whole_body_trajectory_node.cpp
 )
-ament_target_dependencies(tracer_jaka_rectangle_trajectory_target_node ${common_deps})
-target_link_libraries(tracer_jaka_rectangle_trajectory_target_node
+ament_target_dependencies(tracer_jaka_whole_body_trajectory_node ${common_deps})
+target_link_libraries(tracer_jaka_whole_body_trajectory_node
   Eigen3::Eigen
   Boost::system
   Boost::filesystem
@@ -161,7 +161,7 @@ install(TARGETS
   tracer_jaka_target_node
   tracer_jaka_joy_target_node
   tracer_jaka_trajectory_target_node
-  tracer_jaka_rectangle_trajectory_target_node
+  tracer_jaka_whole_body_trajectory_node
   DESTINATION lib/${PROJECT_NAME}
 )
 

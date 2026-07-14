@@ -219,6 +219,33 @@ def generate_launch_description():
             }
         ],
     )
+    whole_body_trajectory_node = Node(
+        package='tracer_jaka_ocs2',
+        executable='tracer_jaka_whole_body_trajectory_node',
+        name='whole_body_trajectory_target_node',
+        output='screen',
+        parameters=[{
+            'csv_file': '/home/a/ocs2_ws/outputs/whole_body_path_example.csv',
+            'robot_name': 'mobile_manipulator',
+            'world_frame': 'odom',
+            'state_dim': 9,
+            'input_dim': 8,
+            'base_dim': 3,
+            'arm_dim': 6,
+            # CSV 没有 time 列时才用到:
+            'linear_speed': 0.15,
+            'angular_speed': 0.30,
+            'joint_speed': 0.50,
+            'min_dt': 0.10,
+            'time_scale': 1.0,       # >1 = 整体放慢
+            'start_lead': 1.0,
+            'auto_publish': True,
+            'auto_publish_delay': 1.0,
+            'prepend_current_state': True,
+            'hold_time_at_end': 3.0,
+        }
+        ],
+    )
 
     target_node = Node(
         package="tracer_jaka_ocs2",
@@ -347,7 +374,8 @@ def generate_launch_description():
         actions=[
             mpc_node,
             mrt_node,
-            target_node,
+            whole_body_trajectory_node,
+            #target_node,
             #joy_driver,
             #joy_target_node,
         ],

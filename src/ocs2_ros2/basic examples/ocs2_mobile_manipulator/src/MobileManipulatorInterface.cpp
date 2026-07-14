@@ -51,15 +51,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "ocs2_mobile_manipulator/ManipulatorModelInfo.h"
 #include "ocs2_mobile_manipulator/MobileManipulatorPreComputation.h"
-
 #include "ocs2_mobile_manipulator/constraint/EndEffectorConstraint.h"
 #include "ocs2_mobile_manipulator/constraint/BodyRelativeConstraint.h"
+
 #include "ocs2_mobile_manipulator/constraint/MobileManipulatorSelfCollisionConstraint.h"
 #include "ocs2_mobile_manipulator/constraint/EnvironmentCollisionConstraint.h"
-
 #include "ocs2_mobile_manipulator/cost/QuadraticInputCost.h"
 #include "ocs2_mobile_manipulator/cost/WholeBodyTrajectoryCost.h"
-
 #include "ocs2_mobile_manipulator/dynamics/DefaultManipulatorDynamics.h"
 #include "ocs2_mobile_manipulator/dynamics/FloatingArmManipulatorDynamics.h"
 #include "ocs2_mobile_manipulator/dynamics/FullyActuatedFloatingArmManipulatorDynamics.h"
@@ -195,20 +193,60 @@ namespace ocs2::mobile_manipulator
         // joint limits constraint
         problem_.softConstraintPtr->add("jointLimits",
                                         getJointLimitSoftConstraint(*pinocchioInterfacePtr_, taskFile));
-        // end-effector state constraint
-        problem_.stateSoftConstraintPtr->add("endEffector", getEndEffectorConstraint(
-                                                 *pinocchioInterfacePtr_, taskFile, "endEffector",
-                                                 usePreComputation, libraryFolder, recompileLibraries));
-        problem_.finalSoftConstraintPtr->add("finalEndEffector", getEndEffectorConstraint(
-                                                 *pinocchioInterfacePtr_, taskFile, "finalEndEffector",
-                                                 usePreComputation, libraryFolder, recompileLibraries));
-
-        // whole-body trajectory tracking soft constraint (二次型 StateCost)
-        bool wholeBodyTrackingEnabled = false;
-        loadData::loadPtreeValue(pt, wholeBodyTrackingEnabled, "wholeBodyTracking.activate", false);
-        if (wholeBodyTrackingEnabled)
+        // ------------------------------------------------------------------
+        // end-effector state constraint (可通过 task 文件整体关闭)
+        //
+        // 注意: 关闭 EE 约束不仅仅是把 muPosition / muOrientation 设为 0。
+        // 只要 EndEffectorConstraint 还在 problem 里, 它就会去解析
+        // TargetTrajectories.stateTrajectory 的 head<3>() / tail<4>();
+        // 而全身轨迹的 state 是 9 维 [x, y, yaw, q1..q6], 那样解析出来的
+        // "四元数" 其实是最后 4 个关节角, 语义完全错误 (且可能出现零四元数)。
+        // 所以做全身轨迹跟踪时必须把 constraint 本身从 problem 中拿掉。
+        // ------------------------------------------------------------------
+        endEffectorEnabled_ = true;
+        loadData::loadPtreeValue(pt, endEffectorEnabled_, "endEffector.activate", true);
+        if (endEffectorEnabled_)
         {
-            problem_.stateCostPtr->add("wholeBodyTracking", getWholeBodyTrajectoryCost(taskFile));
+            problem_.stateSoftConstraintPtr->add("endEffector", getEndEffectorConstraint(
+                                                     *pinocchioInterfacePtr_, taskFile, "endEffector",
+                                                     usePreComputation, libraryFolder, recompileLibraries));
+            problem_.finalSoftConstraintPtr->add("finalEndEffector", getEndEffectorConstraint(
+                                                     *pinocchioInterfacePtr_, taskFile, "finalEndEffector",
+                                                     usePreComputation, libraryFolder, recompileLibraries));
+        }
+        else
+        {
+            std::cerr << "\n #### EndEffector soft-constraints are DISABLED "
+                         "(endEffector.activate = false).\n";
+            std::cerr << " #### TargetTrajectories.stateTrajectory will be interpreted as "
+                         "WHOLE-BODY state.\n";
+        }
+
+        // ------------------------------------------------------------------
+        // whole-body trajectory tracking cost
+        //   L(x,t) = 0.5 * (x - x_d(t))' Q (x - x_d(t))
+        //   x_d(t) 由 ROS 发布的 TargetTrajectories 提供 (stateDim 维)
+        // ------------------------------------------------------------------
+        wholeBodyTrackingEnabled_ = false;
+        loadData::loadPtreeValue(pt, wholeBodyTrackingEnabled_, "wholeBodyTracking.activate", true);
+        if (wholeBodyTrackingEnabled_)
+        {
+            if (endEffectorEnabled_)
+            {
+                throw std::runtime_error(
+                    "[MobileManipulatorInterface] endEffector.activate and "
+                    "wholeBodyTracking.activate cannot both be true: they would interpret the "
+                    "same TargetTrajectories.stateTrajectory as 7-D EE pose and stateDim-D "
+                    "whole-body state at the same time.");
+            }
+
+            problem_.stateCostPtr->add(
+                "wholeBodyTracking",
+                getWholeBodyTrajectoryCost(taskFile, "wholeBodyTracking", false));
+
+            problem_.finalCostPtr->add(
+                "finalWholeBodyTracking",
+                getWholeBodyTrajectoryCost(taskFile, "wholeBodyTracking", true));
         }
         // self-collision avoidance constraint
         selfCollisionEnabled_ = true;
@@ -325,136 +363,59 @@ namespace ocs2::mobile_manipulator
     }
 
 
-    std::unique_ptr<StateCost> MobileManipulatorInterface::getWholeBodyTrajectoryCost(const std::string& taskFile)
+    std::unique_ptr<StateCost> MobileManipulatorInterface::getWholeBodyTrajectoryCost(
+        const std::string& taskFile, const std::string& prefix, bool isFinal)
     {
-        const int stateDim = manipulatorModelInfo_.stateDim;
-        const int armDim = manipulatorModelInfo_.armDim;
-        const int baseDim = stateDim - armDim;
-
         boost::property_tree::ptree pt;
         boost::property_tree::read_info(taskFile, pt);
 
-        std::cerr << "\n #### WholeBodyTracking Settings: ";
-        std::cerr << "\n #### =============================================================================\n";
+        const int stateDim = manipulatorModelInfo_.stateDim;
+        const int armStateDim = manipulatorModelInfo_.armDim;
+        const int baseStateDim = stateDim - armStateDim;
 
-        // ---------------- 权重矩阵 Q ----------------
         matrix_t Q = matrix_t::Zero(stateDim, stateDim);
-        if (baseDim > 0)
+
+        // base 部分 (wheelBased: [x, y, yaw])
+        if (baseStateDim > 0)
         {
-            matrix_t Q_base = matrix_t::Zero(baseDim, baseDim);
-            loadData::loadEigenMatrix(taskFile, "wholeBodyTracking.Q.base", Q_base);
-            Q.topLeftCorner(baseDim, baseDim) = Q_base;
-        }
-        matrix_t Q_arm = matrix_t::Zero(armDim, armDim);
-        loadData::loadEigenMatrix(taskFile, "wholeBodyTracking.Q.arm", Q_arm);
-        Q.bottomRightCorner(armDim, armDim) = Q_arm;
-        std::cerr << " #### Q diagonal: " << Q.diagonal().transpose() << '\n';
-
-        // ---------------- 轨迹起始时间偏移 ----------------
-        scalar_t startTime = 0.0;
-        loadData::loadPtreeValue(pt, startTime, "wholeBodyTracking.startTime", false);
-        std::cerr << " #### startTime: " << startTime << " s\n";
-
-        // ---------------- 航点 (可选, task.info 手写) ----------------
-        // 格式:
-        //   waypoints {
-        //     [0] { time 0.0
-        //           state { [0] 0.0  [1] 0.0  [2] 0.0  [3] -0.515 ... } }
-        //     [1] { ... }
-        //   }
-        // state 必须是 stateDim 维: [x, y, yaw, q1..qn], yaw 建议连续 (不 wrap)
-        scalar_array_t times;
-        vector_array_t states;
-
-        auto wpOpt = pt.get_child_optional("wholeBodyTracking.waypoints");
-        if (wpOpt)
-        {
-            for (const auto& wpPair : wpOpt.get())
-            {
-                const auto& wpNode = wpPair.second;
-                const scalar_t t = wpNode.get<double>("time");
-
-                vector_t s = vector_t::Zero(stateDim);
-                int idx = 0;
-                auto stateOpt = wpNode.get_child_optional("state");
-                if (!stateOpt)
-                {
-                    throw std::runtime_error(
-                        "[WholeBodyTracking] waypoint '" + wpPair.first + "' has no state!");
-                }
-                for (const auto& val : stateOpt.get())
-                {
-                    if (idx < stateDim) s(idx++) = std::stod(val.second.data());
-                }
-                if (idx != stateDim)
-                {
-                    throw std::runtime_error(
-                        "[WholeBodyTracking] waypoint '" + wpPair.first + "' state dim (" +
-                        std::to_string(idx) + ") != stateDim (" + std::to_string(stateDim) + ")!");
-                }
-                times.push_back(t);
-                states.push_back(std::move(s));
-            }
-            std::cerr << " #### Loaded " << times.size() << " waypoints from task file.\n";
+            matrix_t Q_base = matrix_t::Zero(baseStateDim, baseStateDim);
+            loadData::loadEigenMatrix(taskFile, prefix + ".Q.base", Q_base);
+            Q.topLeftCorner(baseStateDim, baseStateDim) = Q_base;
         }
 
-        // ---------------- 无航点时: 生成默认示例轨迹 ----------------
-        // 差速底盘运动学可行的缓弧: v = 0.15 m/s, w = 0.075 rad/s, 时长 20 s
-        // (半径 v/w = 2 m 的圆弧), 机械臂保持 initialState.arm 构型。
-        // 起点接在 initialState.base 上, 保证 t=0 时刻误差为零。
-        if (times.empty())
+        // arm 部分 (q1..qN)
+        matrix_t Q_arm = matrix_t::Zero(armStateDim, armStateDim);
+        loadData::loadEigenMatrix(taskFile, prefix + ".Q.arm", Q_arm);
+        Q.bottomRightCorner(armStateDim, armStateDim) = Q_arm;
+
+        // 终端权重缩放 (默认与中间时刻相同)
+        scalar_t finalWeightScale = 1.0;
+        loadData::loadPtreeValue(pt, finalWeightScale, prefix + ".finalWeightScale", false);
+        if (isFinal)
         {
-            const scalar_t v = 0.15;      // 前向速度 [m/s]
-            const scalar_t w = 0.075;     // 角速度 [rad/s]
-            const scalar_t duration = 20.0;
-            const scalar_t dt = 0.5;
-
-            scalar_t x0 = 0.0, y0 = 0.0, yaw0 = 0.0;
-            if (baseDim >= 3)
-            {
-                x0 = initialState_(0);
-                y0 = initialState_(1);
-                yaw0 = initialState_(2);
-            }
-            const vector_t armHold = initialState_.tail(armDim);
-
-            for (scalar_t t = 0.0; t <= duration + 1e-9; t += dt)
-            {
-                // 局部坐标系下的圆弧
-                const scalar_t xl = (v / w) * std::sin(w * t);
-                const scalar_t yl = (v / w) * (1.0 - std::cos(w * t));
-
-                vector_t s = vector_t::Zero(stateDim);
-                if (baseDim >= 3)
-                {
-                    s(0) = x0 + std::cos(yaw0) * xl - std::sin(yaw0) * yl;
-                    s(1) = y0 + std::sin(yaw0) * xl + std::cos(yaw0) * yl;
-                    s(2) = yaw0 + w * t;   // 连续 yaw (不 wrap), 便于线性插值
-                }
-                s.tail(armDim) = armHold;
-
-                times.push_back(t);
-                states.push_back(std::move(s));
-            }
-            std::cerr << " #### No waypoints in task file -> generated default arc trajectory ("
-                      << times.size() << " points, v=" << v << " m/s, w=" << w
-                      << " rad/s, T=" << duration << " s).\n";
+            Q *= finalWeightScale;
         }
 
-        // 应用起始时间偏移
-        for (auto& t : times) t += startTime;
+        // 只有 wheelBased 模型的 state 里含 yaw, 下标为 2
+        const int yawIndex =
+            (manipulatorModelInfo_.manipulatorModelType ==
+             ManipulatorModelType::WheelBasedMobileManipulator)
+                ? 2
+                : -1;
 
-        std::cerr << " #### trajectory time range: [" << times.front()
-                  << ", " << times.back() << "] s\n";
+        std::cerr << "\n #### " << prefix << (isFinal ? " (final)" : " (intermediate)")
+            << " Settings: ";
+        std::cerr << "\n #### =============================================================================\n";
+        std::cerr << " #### stateDim : " << stateDim << "  (base " << baseStateDim
+            << " + arm " << armStateDim << ")\n";
+        std::cerr << " #### yawIndex : " << yawIndex << '\n';
+        std::cerr << " #### Q:\n" << Q << '\n';
+        std::cerr << " #### 参考轨迹来源: ROS topic <robot>_mpc_target (TargetTrajectories, "
+            << stateDim << " 维 state)\n";
         std::cerr << " #### =============================================================================\n";
 
-        // WheelBased 模型 yaw 在状态下标 2; 其它模型 (无平面 yaw) 传 -1
-        const int yawIndex =
-            (manipulatorModelInfo_.manipulatorModelType == ManipulatorModelType::WheelBasedMobileManipulator)
-                ? 2 : -1;
-
-        return std::make_unique<WholeBodyTrajectoryCost>(std::move(Q), std::move(times),
-                                                         std::move(states), yawIndex);
+        // TargetTrajectories 为空时的兜底参考 = initialState (保持不动)
+        return std::make_unique<WholeBodyTrajectoryCost>(std::move(Q), yawIndex, initialState_);
     }
 
 
