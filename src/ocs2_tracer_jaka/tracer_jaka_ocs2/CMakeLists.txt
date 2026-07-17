@@ -50,6 +50,7 @@ find_package(ocs2_self_collision REQUIRED)
 find_package(ocs2_ros_interfaces REQUIRED)
 find_package(ocs2_mobile_manipulator REQUIRED)
 find_package(ocs2_msgs REQUIRED)
+find_package(ocs2_self_collision_visualization REQUIRED)
 
 set(common_deps
   rclcpp
@@ -74,6 +75,7 @@ set(common_deps
   ocs2_mobile_manipulator
   ocs2_msgs
   std_srvs
+  ocs2_self_collision_visualization
 )
 
 include_directories(include)
@@ -91,7 +93,10 @@ target_link_libraries(tracer_jaka_mpc_node
 )
 
 # ---- MRT / Gazebo bridge node ----
-add_executable(tracer_jaka_mrt_node src/TracerJakaMrtNode.cpp)
+add_executable(tracer_jaka_mrt_node 
+src/TracerJakaMrtNode.cpp
+src/TracerJakaVisualization.cpp
+)
 ament_target_dependencies(tracer_jaka_mrt_node ${common_deps})
 target_link_libraries(tracer_jaka_mrt_node
   Eigen3::Eigen
@@ -126,11 +131,10 @@ target_link_libraries(tracer_jaka_joy_target_node
   Boost::log_setup
 )
 
-add_executable(tracer_jaka_trajectory_target_node
-  src/tracer_jaka_trajectory_target_node.cpp
-)
-ament_target_dependencies(tracer_jaka_trajectory_target_node ${common_deps})
-target_link_libraries(tracer_jaka_trajectory_target_node
+
+add_executable(csv_path_visualizer_node src/csv_path_visualizer_node.cpp)
+ament_target_dependencies(csv_path_visualizer_node ${common_deps})
+target_link_libraries(csv_path_visualizer_node
   Eigen3::Eigen
   Boost::system
   Boost::filesystem
@@ -160,12 +164,12 @@ install(TARGETS
   tracer_jaka_mrt_node
   tracer_jaka_target_node
   tracer_jaka_joy_target_node
-  tracer_jaka_trajectory_target_node
   tracer_jaka_whole_body_trajectory_node
+  csv_path_visualizer_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch config rviz scripts
+install(DIRECTORY launch config rviz scripts include
   DESTINATION share/${PROJECT_NAME}
 )
 

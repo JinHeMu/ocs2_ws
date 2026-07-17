@@ -79,9 +79,10 @@ rollout
 mpc
 {
   timeHorizon                     1.0   ; [s]
-  solutionTimeWindow              -1   ; [s]
+  solutionTimeWindow              0.2   ; [s]
   coldStart                       false
 
+  ; 想在终端看 MPC 每次求解耗时时, 把它设成 true (见文末延迟测试说明)
   debugPrint                      false
 
   mpcDesiredFrequency             100   ; [Hz]
@@ -128,6 +129,7 @@ initialState
     (3,0)  1.5707 ; joint_4
     (4,0)  1.5707 ; joint_5
     (5,0)  0.254  ; joint_6
+
   }
 }
 
@@ -151,9 +153,10 @@ inputCost
       }
       wheelBasedMobileManipulator
       {
+        ; [问题1] 提高转向输入代价给底盘角速度加阻尼, 抑制末尾左右抖动
         scaling 1e-2
-        (0,0)  2.5  ; forward velocity
-        (1,1)  2.5  ; turning velocity
+        (0,0)  2.5   ; forward velocity
+        (1,1)  10.0  ; turning velocity  (was 2.5)
       }
     }
     arm
@@ -171,19 +174,6 @@ inputCost
 
 ; ============================================================================
 ; End-effector 目标跟踪 (全身轨迹模式下必须关闭)
-;
-; 注意: 只把 muPosition / muOrientation 设成 0 是不够的!
-; 只要 EndEffectorConstraint 还挂在 problem 上, 它就会去解析
-; TargetTrajectories.stateTrajectory 的 head<3>() 和 tail<4>();
-; 而全身轨迹的 state 是 9 维 [x, y, yaw, q1..q6],
-; tail<4>() 取到的是 q3..q6, 被当成四元数使用 -> 语义完全错误。
-; 所以这里用 activate 把 constraint 整个从 problem 里摘掉。
-;
-; 若要切回 EE 目标模式:
-;   endEffector.activate      -> true  (并恢复 muPosition/muOrientation)
-;   finalEndEffector 权重      -> 恢复
-;   wholeBodyTracking.activate -> false
-;   MRT 节点参数 use_whole_body_target -> false
 ; ============================================================================
 endEffector
 {
@@ -201,58 +191,168 @@ finalEndEffector
 
 ; ============================================================================
 ; 全身轨迹跟踪 cost (WholeBodyTrajectoryCost)
-;
-;   L(x,t) = 0.5 * (x - x_d(t))' Q (x - x_d(t)),  yaw 误差自动 wrap 到 [-pi, pi]
-;   x     = [x, y, yaw, q1..q6]                    (stateDim = 9)
-;   x_d(t) 来自 ROS topic mobile_manipulator_mpc_target 里的 TargetTrajectories,
-;          由 whole_body_trajectory_target_node 发布, 经 RosReferenceManager 传入。
-;
-; 与旧版的区别: 不再从 task 文件读 waypoints, 轨迹完全在运行时由 ROS 提供。
 ; ============================================================================
 wholeBodyTracking
 {
   activate   true
 
-  ; 终端 cost 的权重缩放 (相对中间时刻 Q)
-  finalWeightScale  1e-1
+  ; [问题1] 终端权重缩放 5 -> 1.0, 避免末尾过度追逐横向位置
+  finalWeightScale  1.0
 
-  ; 状态偏差权重 (对角)
   Q
   {
     base
     {
-      (0,0)  10.0   ; x   [m]
-      (1,1)  10.0   ; y   [m]
-      (2,2)   4.0   ; yaw [rad]
+      (0,0)  2.0   ; x   [m]
+      (1,1)  2.0   ; y   [m]
+      (2,2)  0.5   ; yaw [rad]  [问题1] 0.5 -> 2.0, 优先对齐航向
     }
     arm
     {
-      (0,0)  2.0    ; joint_1
-      (1,1)  2.0    ; joint_2
-      (2,2)  2.0    ; joint_3
-      (3,3)  2.0    ; joint_4
-      (4,4)  2.0    ; joint_5
-      (5,5)  2.0    ; joint_6
+      (0,0)  1.0   ; joint_1
+      (1,1)  1.0   ; joint_2
+      (2,2)  1.0   ; joint_3
+      (3,3)  1.0   ; joint_4
+      (4,4)  1.0   ; joint_5
+      (5,5)  1.0   ; joint_6
     }
   }
 }
 
+; ============================================================================
+; 自碰撞 (环境避障复用它的几何模型, 必须保持 activate true)
+; ============================================================================
 selfCollision
 {
   activate true
 
-  collisionLinkPairs
+  collisionObjectPairs
   {
-
-
   }
 
-  collisionObjectPairs { }
+  collisionLinkPairs
+  {
+    ; 机械臂与底盘
+    [0]  "base_link, Link_2"
+    [1]  "base_link, Link_3"
+    [2]  "base_link, Link_4"
+    [3]  "base_link, Link_5"
+    [4]  "base_link, Link_6"
+    [5]  "base_link, tool0_and_camera_link"
+    [6]  "base_link, d435i_link"
 
-  minimumDistance 0.05
-  mu 1e-2
-  delta 1e-3
+    ; 非相邻机械臂 link
+    [7]  "Link_0, Link_2"
+    [8]  "Link_0, Link_3"
+    [9]  "Link_1, Link_3"
+    [10] "Link_1, Link_4"
+    [11] "Link_2, Link_4"
+    [12] "Link_2, Link_5"
+    [13] "Link_3, Link_5"
+    [14] "Link_3, Link_6"
+    [15] "Link_4, Link_6"
+
+    ; 工具和相机折回碰机械臂
+    [16] "Link_0, tool0_and_camera_link"
+    [17] "Link_1, tool0_and_camera_link"
+    [18] "Link_2, tool0_and_camera_link"
+    [19] "Link_3, tool0_and_camera_link"
+    [20] "Link_4, tool0_and_camera_link"
+    [21] "Link_5, tool0_and_camera_link"
+
+    [22] "Link_0, d435i_link"
+    [23] "Link_1, d435i_link"
+    [24] "Link_2, d435i_link"
+    [25] "Link_3, d435i_link"
+    [26] "Link_4, d435i_link"
+    [27] "Link_5, d435i_link"
+  }
+
+  minimumDistance 0.02
+  mu               1e-2
+  delta            1e-3
 }
+
+; ============================================================================
+; 环境避障 (EnvironmentCollisionConstraint)
+;
+;   activate=true 时, 对 collisionLinks 里的每个 link 与 obstacles 里的每个静态
+;   障碍物做距离约束, 用 ThresholdRelaxedBarrierPenalty 软约束推离。
+;
+;   penalty 仅在 距离 < activationDistance 时激活;
+;   minimumDistance 是期望保持的最小间隙 (约束值 h = 实际距离 - minimumDistance)。
+;
+;   障碍物坐标系 = 全身状态所在的世界系 (你这里是 odom)。
+;   collisionLinks 里的 link 名必须存在于 URDF; 建议先从少量 link 开始, 越多越慢。
+;
+;   注意: 这些障碍物是【构造时一次性加载】的静态环境, 用来测试避障与开销。
+;         想动态增删障碍物需要额外的服务/话题接口, 这里先不涉及。
+; ============================================================================
+environmentCollision
+{
+  activate            true
+
+  mu                  1e-2
+  delta               1e-3
+  minimumDistance     0.05    ; 期望最小间隙 [m]
+  activationDistance  0.30    ; 距离 < 此值才开始惩罚 [m] (缺省=5*minimumDistance)
+
+  ; 参与环境避障的机器人 link (少而关键, 便于控制求解开销)
+  collisionLinks
+  {
+    [0] "base_link"
+    [1] "Link_3"
+    [2] "Link_4"
+    [3] "Link_5"
+    [4] "Link_6"
+    [5] "tool0_and_camera_link"
+    [6] "d435i_link"
+  }
+
+  ; ---- 静态测试障碍物 ----
+  ; position:    [x, y, z]        (在 odom 世界系)
+  ; orientation: [w, x, y, z]     (可选, 缺省单位四元数)
+  ; box.halfExtents: [hx, hy, hz] (半边长)
+  ; 提示: 位置请按你的实际轨迹微调, 让障碍物贴近但不完全压住参考路径,
+  ;       这样既能看到明显绕行, 又不至于让软约束和跟踪 cost 打架到发散。
+  obstacles
+  {
+    box_1
+    {
+      type box
+      position    { [0] 1.30  [1] -0.55  [2] 0.30 }
+      orientation { [0] 1.0   [1] 0.0   [2] 0.0   [3] 0.0 }
+      halfExtents { [0] 0.15  [1] 0.15  [2] 0.30 }
+      minimumDistance 0.05
+    }
+    box_2
+    {
+      type box
+      position    { [0] 2.5  [1] -0.0  [2] 0.35 }
+      orientation { [0] 1.0   [1] 0.0   [2] 0.0   [3] 0.0 }
+      halfExtents { [0] 0.15  [1] 0.15  [2] 0.35 }
+      minimumDistance 0.05
+    }
+    ; 一个球和一个圆柱的示例 (默认注释掉, 需要时把 activate 内容打开即可仿写)
+    ; sphere_1
+    ; {
+    ;   type sphere
+    ;   position { [0] 1.80  [1] 1.05  [2] 0.40 }
+    ;   radius 0.15
+    ;   minimumDistance 0.05
+    ; }
+    ; cylinder_1
+    ; {
+    ;   type cylinder
+    ;   position    { [0] 2.00  [1] 0.30  [2] 0.30 }
+    ;   orientation { [0] 1.0 [1] 0.0 [2] 0.0 [3] 0.0 }
+    ;   radius 0.12
+    ;   height 0.60
+    ;   minimumDistance 0.05
+    ; }
+  }
+}
+
 
 jointPositionLimits
 {
@@ -283,8 +383,8 @@ jointVelocityLimits
       }
       wheelBasedMobileManipulator
       {
-        (0,0)  -0.25
-        (1,0)  -0.5
+        (0,0)  -0.5
+        (1,0)  -1.0
       }
     }
     arm
@@ -315,8 +415,8 @@ jointVelocityLimits
       }
       wheelBasedMobileManipulator
       {
-        (0,0)  0.25
-        (1,0)  0.5
+        (0,0)  0.5
+        (1,0)  1.0
       }
     }
     arm
@@ -330,3 +430,4 @@ jointVelocityLimits
     }
   }
 }
+

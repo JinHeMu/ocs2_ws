@@ -14,11 +14,18 @@
 //   * JTC 轨迹只发 position, 不发 velocity, 避开 "last point velocity != 0" 拒收
 //   * 单点轨迹 (1 个 point @ traj_horizon ahead), 避免 currentTime > plan_end
 //   * MRT 用独立 internal node, 不跟主 node 抢 executor
+//
+//  [可视化新增]
+//   * 集成 TracerJakaVisualization: 每个控制周期(降频)把 MPC 预测的 EE/底盘轨迹、
+//     参考全身轨迹、以及自碰撞距离发布成 RViz marker。开关参数 enable_visualization。
+//   * 它【不】发布 joint_states / world->base TF (那些来自仿真或 robot_state_publisher),
+//     只发轨迹 marker, 因此和你现有 TF 树不冲突。
 // =============================================================================
 
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <cmath>
 #include <memory>
 #include <mutex>
 #include <sstream>
@@ -46,6 +53,9 @@
 #include <ocs2_mobile_manipulator/ManipulatorModelInfo.h>
 #include <ocs2_mpc/SystemObservation.h>
 #include <ocs2_ros_interfaces/mrt/MRT_ROS_Interface.h>
+
+// [可视化新增]
+#include "TracerJakaVisualization.h"
 
 using namespace std::chrono_literals;
 
@@ -108,6 +118,11 @@ class TracerJakaMrtBridge : public rclcpp::Node {
     //              false -> 初始 target = 当前 EE 位姿 (7 维),      配合 EndEffectorConstraint
     declare_parameter<bool>("use_whole_body_target", true);
 
+    // [可视化新增] 参数
+    declare_parameter<bool>("enable_visualization", true);
+    declare_parameter<bool>("viz_self_collision",   true);
+    declare_parameter<double>("viz_rate",           20.0);   // marker 发布频率 [Hz]
+
     taskFile_       = get_parameter("taskFile").as_string();
     libFolder_      = get_parameter("libFolder").as_string();
     urdfFile_       = get_parameter("urdfFile").as_string();
@@ -119,6 +134,10 @@ class TracerJakaMrtBridge : public rclcpp::Node {
     eeFrame_        = get_parameter("ee_frame").as_string();
     useStampedCmd_  = get_parameter("use_stamped_cmd").as_bool();
     useWholeBodyTarget_ = get_parameter("use_whole_body_target").as_bool();
+
+    enableViz_       = get_parameter("enable_visualization").as_bool();
+    vizSelfCollision_= get_parameter("viz_self_collision").as_bool();
+    vizRate_         = get_parameter("viz_rate").as_double();
 
     armQ_.assign(armJointNames_.size(), 0.0);
 
@@ -187,6 +206,18 @@ class TracerJakaMrtBridge : public rclcpp::Node {
     mrt_ = std::make_unique<ocs2::MRT_ROS_Interface>("mobile_manipulator");
     mrt_->initRollout(&interface_->getRollout());
     mrt_->launchNodes(ocs2InternalNode_);
+
+    // [可视化新增] 需要 shared_from_this(), 只能在 make_shared 之后调用,
+    // 因此放在 initMrt() 里 (由 main 在构造完成后调用)。
+    if (enableViz_) {
+      viz_ = std::make_unique<tracer_jaka::TracerJakaVisualization>(
+          shared_from_this(), *interface_, worldFrame_, vizSelfCollision_);
+      vizEveryN_ = std::max(1, static_cast<int>(std::round(
+          mrtRate_ / std::max(1.0, vizRate_))));
+      RCLCPP_INFO(get_logger(),
+                  "Visualization enabled: 每 %d 个控制周期发布一次 marker (~%.1f Hz).",
+                  vizEveryN_, mrtRate_ / vizEveryN_);
+    }
   }
 
   /// MRT 主循环 (阻塞)
@@ -257,7 +288,13 @@ class TracerJakaMrtBridge : public rclcpp::Node {
     // ---- 主循环 ----
     rclcpp::Rate rate(mrtRate_);
     const auto t0 = now();
+
+    // ---- 计时/频率统计 ----
+    using clk = std::chrono::steady_clock;
+    lastReport_ = now();
     while (rclcpp::ok()) {
+      const auto workBegin = clk::now();   // 一次控制迭代的"计算"起点
+
       mrt_->spinMRT();
 
       ocs2::SystemObservation obs;
@@ -271,7 +308,8 @@ class TracerJakaMrtBridge : public rclcpp::Node {
       }
 
       mrt_->setCurrentObservation(obs);
-      mrt_->updatePolicy();
+      const bool policyUpdated = mrt_->updatePolicy();   // 是否拿到"新"策略
+      if (policyUpdated) ++policyUpdateCount_;
 
       // 当前时刻的 input 直接给底盘
       ocs2::vector_t optState, optInput;
@@ -282,12 +320,60 @@ class TracerJakaMrtBridge : public rclcpp::Node {
       // traj_horizon 之后的 state 给机械臂 (单点, 仅 position)
       publishArmCommand(obs.time, obs.state);
 
+      // [可视化新增] 降频发布 marker
+      if (viz_ && (++vizCounter_ % vizEveryN_ == 0)) {
+        try {
+          viz_->update(obs, mrt_->getPolicy(), mrt_->getCommand());
+        } catch (const std::exception& e) {
+          RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 5000,
+                               "visualization update failed: %s", e.what());
+        }
+      }
+
+      // —— 计算耗时 (不含 rate.sleep 的等待) ——
+      const double workMs =
+          std::chrono::duration<double, std::milli>(clk::now() - workBegin).count();
+      loopWorkSumMs_ += workMs;
+      loopWorkMaxMs_ = std::max(loopWorkMaxMs_, workMs);
+      ++loopCount_;
+
+      // —— "计划新鲜度" = 当前观测时间 - 生成当前策略所用观测的时间 ——
+      // 近似反映 观测->求解->回传 的端到端控制延迟。
+      const double planAgeMs =
+          1000.0 * (obs.time - mrt_->getCommand().mpcInitObservation_.time);
+      planAgeSumMs_ += planAgeMs;
+      planAgeMaxMs_ = std::max(planAgeMaxMs_, planAgeMs);
+
+      // —— 每 ~2s 汇报一次 ——
+      const double reportDt = (now() - lastReport_).seconds();
+      if (reportDt >= 2.0 && loopCount_ > 0) {
+        const double ctrlHz     = loopCount_ / reportDt;
+        const double mpcSeenHz  = policyUpdateCount_ / reportDt;   // MRT 侧看到的新策略频率
+        const double avgWorkMs  = loopWorkSumMs_ / loopCount_;
+        const double avgPlanMs  = planAgeSumMs_ / loopCount_;
+        RCLCPP_INFO(get_logger(),
+                    "[timing] ctrl_loop=%.1f Hz (target %.0f) | work/iter avg=%.2f ms max=%.2f ms | "
+                    "MPC_policy_seen=%.1f Hz | plan_age avg=%.1f ms max=%.1f ms",
+                    ctrlHz, mrtRate_, avgWorkMs, loopWorkMaxMs_,
+                    mpcSeenHz, avgPlanMs, planAgeMaxMs_);
+
+        // 复位窗口
+        lastReport_        = now();
+        loopCount_         = 0;
+        policyUpdateCount_ = 0;
+        loopWorkSumMs_     = 0.0;
+        loopWorkMaxMs_     = 0.0;
+        planAgeSumMs_      = 0.0;
+        planAgeMaxMs_      = 0.0;
+      }
+
       rate.sleep();
     }
   }
 
   /// 显式释放 OCS2 资源 (析构顺序敏感, main 退出前调用)
   void shutdownOcs2() {
+    viz_.reset();            // [可视化新增] 先于 mrt_/interface_ 释放
     mrt_.reset();
     ocs2InternalNode_.reset();
   }
@@ -431,6 +517,23 @@ class TracerJakaMrtBridge : public rclcpp::Node {
   bool   useWholeBodyTarget_{true};
   std::vector<std::string> armJointNames_;
 
+  // [可视化新增]
+  bool   enableViz_{true};
+  bool   vizSelfCollision_{true};
+  double vizRate_{20.0};
+  int    vizEveryN_{5};
+  long   vizCounter_{0};
+  std::unique_ptr<tracer_jaka::TracerJakaVisualization> viz_;
+
+  // [计时统计] 每 ~2s 汇报一次控制环频率 / 计算耗时 / 计划新鲜度
+  rclcpp::Time lastReport_;
+  size_t loopCount_{0};
+  size_t policyUpdateCount_{0};
+  double loopWorkSumMs_{0.0};
+  double loopWorkMaxMs_{0.0};
+  double planAgeSumMs_{0.0};
+  double planAgeMaxMs_{0.0};
+
   std::unique_ptr<ocs2::mobile_manipulator::MobileManipulatorInterface> interface_;
   rclcpp::Node::SharedPtr ocs2InternalNode_;
   std::unique_ptr<ocs2::MRT_ROS_Interface> mrt_;
@@ -482,4 +585,3 @@ int main(int argc, char** argv) {
   rclcpp::shutdown();
   return 0;
 }
-

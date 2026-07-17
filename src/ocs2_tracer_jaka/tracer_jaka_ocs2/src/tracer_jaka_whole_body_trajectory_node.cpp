@@ -26,9 +26,16 @@
 //  首点衔接:
 //      prepend_current = true 时, 把 observation 里的当前全身状态作为第 0 个航点,
 //      并按可行速度给出到第一个 CSV 航点的过渡时间, 避免起步瞬间的目标跳变。
+//
+//  [问题2新增] 关节轨迹可视化:
+//      除底盘 Path (x, y, yaw) 外, 额外把 q1..qN 每个关节画成
+//      "关节值 vs 归一化时间" 的折线 + 采样点 + 零线 + 文字标签, 以 MarkerArray
+//      发布到 joint_marker_topic (默认 whole_body_joint_markers)。
+//      yaw 因为难以在同一坐标里同时表达位置和朝向, 依旧只用底盘 Path 表示。
 // =============================================================================
 
 #include <algorithm>
+#include <array>
 #include <chrono>
 #include <cctype>
 #include <cmath>
@@ -42,10 +49,13 @@
 #include <Eigen/Dense>
 #include <rclcpp/rclcpp.hpp>
 
+#include <geometry_msgs/msg/point.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <nav_msgs/msg/path.hpp>
 #include <std_srvs/srv/trigger.hpp>
 #include <tf2/LinearMath/Quaternion.h>
+#include <visualization_msgs/msg/marker.hpp>
+#include <visualization_msgs/msg/marker_array.hpp>
 
 #include <ocs2_core/Types.h>
 #include <ocs2_core/reference/TargetTrajectories.h>
@@ -92,6 +102,19 @@ class WholeBodyTrajectoryTargetNode : public rclcpp::Node {
 
     declare_parameter<std::string>("path_topic", "whole_body_target_path");
 
+    // ── [问题2新增] 关节轨迹可视化参数 ──────────────────────
+    declare_parameter<bool>("viz_joint_markers", true);
+    // 画图所在坐标系; 留空则用 world_frame
+    declare_parameter<std::string>("viz_plot_frame", "");
+    // 画图原点 [x, y, z] (在 viz_plot_frame 里), 各关节沿 +z 分道叠放
+    declare_parameter<std::vector<double>>(
+        "viz_plot_origin", std::vector<double>{0.0, -1.5, 0.3});
+    declare_parameter<double>("viz_time_scale",  3.0);   // 时间轴总长度 [m]
+    declare_parameter<double>("viz_value_scale", 0.20);  // rad -> m
+    declare_parameter<double>("viz_lane_gap",    0.40);  // 每个关节垂直间隔 [m]
+    declare_parameter<std::string>("joint_marker_topic",
+                                   "whole_body_joint_markers");
+
     // ── 读取参数 ────────────────────────────────────────────
     csvFile_    = get_parameter("csv_file").as_string();
     robotName_  = get_parameter("robot_name").as_string();
@@ -115,6 +138,27 @@ class WholeBodyTrajectoryTargetNode : public rclcpp::Node {
     holdTimeAtEnd_    = get_parameter("hold_time_at_end").as_double();
 
     pathTopic_ = get_parameter("path_topic").as_string();
+
+    // ── [问题2新增] 读取可视化参数 ──────────────────────────
+    vizJointMarkers_ = get_parameter("viz_joint_markers").as_bool();
+    vizPlotFrame_    = get_parameter("viz_plot_frame").as_string();
+    if (vizPlotFrame_.empty()) {
+      vizPlotFrame_ = worldFrame_;
+    }
+    {
+      const auto origin = get_parameter("viz_plot_origin").as_double_array();
+      if (origin.size() == 3) {
+        vizPlotOrigin_ = {origin[0], origin[1], origin[2]};
+      } else {
+        RCLCPP_WARN(get_logger(),
+                    "viz_plot_origin 需要 3 个元素, 收到 %zu 个, 使用默认值。",
+                    origin.size());
+      }
+    }
+    vizTimeScale_  = get_parameter("viz_time_scale").as_double();
+    vizValueScale_ = get_parameter("viz_value_scale").as_double();
+    vizLaneGap_    = get_parameter("viz_lane_gap").as_double();
+    jointMarkerTopic_ = get_parameter("joint_marker_topic").as_string();
 
     // ── 参数保护 ────────────────────────────────────────────
     if (baseDim_ + armDim_ != stateDim_) {
@@ -168,6 +212,10 @@ class WholeBodyTrajectoryTargetNode : public rclcpp::Node {
     const auto vizQos =
         rclcpp::QoS(rclcpp::KeepLast(1)).reliable().transient_local();
     pathPub_ = create_publisher<nav_msgs::msg::Path>(pathTopic_, vizQos);
+
+    // ── [问题2新增] 关节轨迹 MarkerArray publisher ──────────
+    jointMarkerPub_ = create_publisher<visualization_msgs::msg::MarkerArray>(
+        jointMarkerTopic_, vizQos);
   }
 
   /// 需要 shared_from_this(), 必须在 main 里单独调用
@@ -181,6 +229,7 @@ class WholeBodyTrajectoryTargetNode : public rclcpp::Node {
                   std::placeholders::_1, std::placeholders::_2));
 
     publishPathViz();
+    publishJointViz();   // [问题2新增]
 
     if (autoPublish_) {
       autoTimer_ = create_wall_timer(
@@ -193,6 +242,11 @@ class WholeBodyTrajectoryTargetNode : public rclcpp::Node {
                 robotName_.c_str(), stateDim_, inputDim_, states_.size());
     RCLCPP_INFO(get_logger(),
                 "调用 /whole_body_trajectory/publish 发布轨迹, 或使用 auto_publish。");
+    if (vizJointMarkers_) {
+      RCLCPP_INFO(get_logger(),
+                  "关节轨迹可视化已开启, MarkerArray 话题: %s (frame=%s)",
+                  jointMarkerTopic_.c_str(), vizPlotFrame_.c_str());
+    }
   }
 
  private:
@@ -472,6 +526,7 @@ class WholeBodyTrajectoryTargetNode : public rclcpp::Node {
                 M, t0, timeSeq.front(), timeSeq.back());
 
     publishPathViz();
+    publishJointViz();   // [问题2新增]
     return true;
   }
 
@@ -504,6 +559,160 @@ class WholeBodyTrajectoryTargetNode : public rclcpp::Node {
       path.poses.push_back(ps);
     }
     pathPub_->publish(path);
+  }
+
+  // =======================================================================
+  // 5b) [问题2新增] 可视化: 所有臂关节轨迹 (值 vs 归一化时间)
+  //
+  //   在 viz_plot_frame 里画一个 "图表":
+  //     - 横轴 (x)  = 归一化时间, 从 origin.x 到 origin.x + viz_time_scale
+  //     - 每个关节占一条 "泳道", 沿 z 方向按 viz_lane_gap 叠放
+  //     - 纵向偏移 (z) = 关节值 * viz_value_scale, 叠加在该泳道基线上
+  //   每条泳道包含: 折线 (LINE_STRIP) + 采样点 (SPHERE_LIST) + 零基线 + 文字标签。
+  //   yaw 难以在此同时表达位置和朝向, 故不在这里画 (由底盘 Path 表示)。
+  // =======================================================================
+  void publishJointViz() {
+    if (!vizJointMarkers_ || !jointMarkerPub_) {
+      return;
+    }
+    if (states_.empty() || relTimes_.empty()) {
+      return;
+    }
+
+    // 简单的固定调色板 (RGB), 超过 6 个关节循环使用
+    static const std::array<std::array<double, 3>, 6> kPalette = {{
+        {{0.90, 0.10, 0.10}},   // q1 红
+        {{0.95, 0.60, 0.10}},   // q2 橙
+        {{0.85, 0.85, 0.10}},   // q3 黄
+        {{0.10, 0.75, 0.20}},   // q4 绿
+        {{0.10, 0.55, 0.95}},   // q5 蓝
+        {{0.65, 0.25, 0.90}},   // q6 紫
+    }};
+
+    const rclcpp::Time stamp = now();
+    const double tSpan = std::max(1e-6, relTimes_.back());
+    auto tx = [&](double relT) {
+      return vizPlotOrigin_[0] + (relT / tSpan) * vizTimeScale_;
+    };
+
+    visualization_msgs::msg::MarkerArray arr;
+    // 先发一个 DELETEALL, 保证重新发布时旧 marker 被清掉
+    {
+      visualization_msgs::msg::Marker del;
+      del.header.frame_id = vizPlotFrame_;
+      del.header.stamp = stamp;
+      del.action = visualization_msgs::msg::Marker::DELETEALL;
+      arr.markers.push_back(del);
+    }
+
+    int idBase = 0;
+    for (int j = 0; j < armDim_; ++j) {
+      const double laneZ = vizPlotOrigin_[2] + j * vizLaneGap_;
+      const auto& c = kPalette[j % kPalette.size()];
+
+      // --- 折线: 关节值随时间 ---
+      visualization_msgs::msg::Marker line;
+      line.header.frame_id = vizPlotFrame_;
+      line.header.stamp = stamp;
+      line.ns = "wb_joint_line";
+      line.id = idBase++;
+      line.type = visualization_msgs::msg::Marker::LINE_STRIP;
+      line.action = visualization_msgs::msg::Marker::ADD;
+      line.scale.x = 0.012;                 // 线宽
+      line.color.r = c[0]; line.color.g = c[1]; line.color.b = c[2];
+      line.color.a = 1.0;
+      line.pose.orientation.w = 1.0;
+
+      // --- 采样点 ---
+      visualization_msgs::msg::Marker pts;
+      pts.header = line.header;
+      pts.ns = "wb_joint_pts";
+      pts.id = idBase++;
+      pts.type = visualization_msgs::msg::Marker::SPHERE_LIST;
+      pts.action = visualization_msgs::msg::Marker::ADD;
+      pts.scale.x = pts.scale.y = pts.scale.z = 0.025;
+      pts.color.r = c[0]; pts.color.g = c[1]; pts.color.b = c[2];
+      pts.color.a = 1.0;
+      pts.pose.orientation.w = 1.0;
+
+      for (size_t i = 0; i < states_.size(); ++i) {
+        geometry_msgs::msg::Point p;
+        p.x = tx(relTimes_[i]);
+        p.y = vizPlotOrigin_[1];
+        p.z = laneZ + states_[i](baseDim_ + j) * vizValueScale_;
+        line.points.push_back(p);
+        pts.points.push_back(p);
+      }
+      arr.markers.push_back(line);
+      arr.markers.push_back(pts);
+
+      // --- 该泳道的零基线 (灰色, 半透明) ---
+      visualization_msgs::msg::Marker zero;
+      zero.header = line.header;
+      zero.ns = "wb_joint_zero";
+      zero.id = idBase++;
+      zero.type = visualization_msgs::msg::Marker::LINE_STRIP;
+      zero.action = visualization_msgs::msg::Marker::ADD;
+      zero.scale.x = 0.004;
+      zero.color.r = 0.5; zero.color.g = 0.5; zero.color.b = 0.5;
+      zero.color.a = 0.5;
+      zero.pose.orientation.w = 1.0;
+      {
+        geometry_msgs::msg::Point z0, z1;
+        z0.x = tx(0.0);   z0.y = vizPlotOrigin_[1]; z0.z = laneZ;
+        z1.x = tx(tSpan); z1.y = vizPlotOrigin_[1]; z1.z = laneZ;
+        zero.points.push_back(z0);
+        zero.points.push_back(z1);
+      }
+      arr.markers.push_back(zero);
+
+      // --- 文字标签 (关节名 + 终点值) ---
+      visualization_msgs::msg::Marker txt;
+      txt.header = line.header;
+      txt.ns = "wb_joint_label";
+      txt.id = idBase++;
+      txt.type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;
+      txt.action = visualization_msgs::msg::Marker::ADD;
+      txt.scale.z = 0.06;                   // 字高
+      txt.color.r = c[0]; txt.color.g = c[1]; txt.color.b = c[2];
+      txt.color.a = 1.0;
+      txt.pose.position.x = tx(0.0) - 0.18;
+      txt.pose.position.y = vizPlotOrigin_[1];
+      txt.pose.position.z = laneZ;
+      txt.pose.orientation.w = 1.0;
+      {
+        std::ostringstream oss;
+        oss.setf(std::ios::fixed);
+        oss.precision(3);
+        oss << "q" << (j + 1)
+            << "  [" << states_.front()(baseDim_ + j)
+            << " -> " << states_.back()(baseDim_ + j) << "]";
+        txt.text = oss.str();
+      }
+      arr.markers.push_back(txt);
+    }
+
+    // --- 图表标题 ---
+    {
+      visualization_msgs::msg::Marker title;
+      title.header.frame_id = vizPlotFrame_;
+      title.header.stamp = stamp;
+      title.ns = "wb_joint_title";
+      title.id = idBase++;
+      title.type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;
+      title.action = visualization_msgs::msg::Marker::ADD;
+      title.scale.z = 0.08;
+      title.color.r = title.color.g = title.color.b = 1.0;
+      title.color.a = 1.0;
+      title.pose.position.x = vizPlotOrigin_[0] + 0.5 * vizTimeScale_;
+      title.pose.position.y = vizPlotOrigin_[1];
+      title.pose.position.z = vizPlotOrigin_[2] + armDim_ * vizLaneGap_;
+      title.pose.orientation.w = 1.0;
+      title.text = "whole-body joint trajectory (value vs time)";
+      arr.markers.push_back(title);
+    }
+
+    jointMarkerPub_->publish(arr);
   }
 
   // =======================================================================
@@ -549,6 +758,13 @@ class WholeBodyTrajectoryTargetNode : public rclcpp::Node {
   double startLead_{1.0}, autoPublishDelay_{1.0}, holdTimeAtEnd_{3.0};
   bool   autoPublish_{true}, prependCurrent_{true}, hasTimeColumn_{false};
 
+  // [问题2新增] 关节可视化参数
+  bool                     vizJointMarkers_{true};
+  std::string              vizPlotFrame_;
+  std::array<double, 3>    vizPlotOrigin_{{0.0, -1.5, 0.3}};
+  double                   vizTimeScale_{3.0}, vizValueScale_{0.20}, vizLaneGap_{0.40};
+  std::string              jointMarkerTopic_;
+
   std::vector<ocs2::vector_t> states_;
   std::vector<double>         csvTimes_;
   std::vector<double>         relTimes_;
@@ -556,6 +772,7 @@ class WholeBodyTrajectoryTargetNode : public rclcpp::Node {
   std::unique_ptr<ocs2::TargetTrajectoriesRosPublisher> targetPub_;
   rclcpp::Subscription<ocs2_msgs::msg::MpcObservation>::SharedPtr obsSub_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr pathPub_;
+  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr jointMarkerPub_;  // [问题2新增]
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr publishSrv_;
   rclcpp::TimerBase::SharedPtr autoTimer_;
 
@@ -576,3 +793,4 @@ int main(int argc, char** argv) {
   rclcpp::shutdown();
   return 0;
 }
+

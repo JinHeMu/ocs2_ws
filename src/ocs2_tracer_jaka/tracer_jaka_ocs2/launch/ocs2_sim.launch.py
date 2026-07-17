@@ -184,8 +184,8 @@ def generate_launch_description():
                 "urdfFile": urdf_file,
                 "libFolder": lib_folder,
 
-                "mrt_loop_rate": 100.0,
-                "traj_horizon": 0.05,
+                "mrt_loop_rate": 125.0,
+                "traj_horizon": 1.0,
                 "traj_num_points": 5,
 
                 "use_stamped_cmd": False,
@@ -357,7 +357,6 @@ def generate_launch_description():
     output="screen",
     )
 
-
     # -------------------------------------------------------------------------
     # 启动时序
     #
@@ -374,7 +373,6 @@ def generate_launch_description():
         actions=[
             mpc_node,
             mrt_node,
-            whole_body_trajectory_node,
             #target_node,
             #joy_driver,
             #joy_target_node,
@@ -386,8 +384,9 @@ def generate_launch_description():
         + [
             prepare_urdf,
             mujoco_launch,
-            rviz_delayed,
             ocs2_delayed,
             map_to_odom_tf,
+            rviz_delayed,
+            whole_body_trajectory_node,
         ]
     )
