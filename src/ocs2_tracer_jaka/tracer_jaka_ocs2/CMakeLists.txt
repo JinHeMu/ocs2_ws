@@ -156,6 +156,20 @@ target_link_libraries(tracer_jaka_whole_body_trajectory_node
   Boost::log_setup
 )
 
+# ---- Joy whole-body trajectory node ----
+add_executable(tracer_jaka_joy_whole_body_node
+  src/tracer_jaka_joy_whole_body_node.cpp
+)
+ament_target_dependencies(tracer_jaka_joy_whole_body_node ${common_deps})
+target_link_libraries(tracer_jaka_joy_whole_body_node
+  Eigen3::Eigen
+  Boost::system
+  Boost::filesystem
+  Boost::thread
+  Boost::log
+  Boost::log_setup
+)
+
 
 
 # ---- Install ----
@@ -165,6 +179,7 @@ install(TARGETS
   tracer_jaka_target_node
   tracer_jaka_joy_target_node
   tracer_jaka_whole_body_trajectory_node
+  tracer_jaka_joy_whole_body_node
   csv_path_visualizer_node
   DESTINATION lib/${PROJECT_NAME}
 )

@@ -7,15 +7,14 @@ Panels:
         - /Global Options1
         - /Status1
         - /RobotModel1
-        - /RobotModel1/Links1
-        - /RobotModel1/Links1/tool01
         - /Path1
         - /MarkerArray1
         - /MarkerArray1/Topic1
         - /MarkerArray1/Namespaces1
         - /MarkerArray2
+        - /MarkerArray3
       Splitter Ratio: 0.5
-    Tree Height: 803
+    Tree Height: 964
   - Class: rviz_common/Views
     Expanded:
       - /Current View1
@@ -199,7 +198,7 @@ Visualization Manager:
         tool0:
           Alpha: 1
           Show Axes: false
-          Show Trail: true
+          Show Trail: false
         tool0_and_camera_link:
           Alpha: 1
           Show Axes: false
@@ -389,6 +388,19 @@ Visualization Manager:
       Enabled: true
       Name: MarkerArray
       Namespaces:
+        Base Trajectory: true
+        EE Trajectory: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /tracer_jaka/optimizedStateTrajectory
+      Value: true
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: MarkerArray
+      Namespaces:
         Reference Base Trajectory: true
         Reference EE Trajectory: true
       Topic:
@@ -422,7 +434,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 8.216583251953125
+      Distance: 4.241747856140137
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -437,20 +449,20 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7400030493736267
+      Pitch: 0.19500288367271423
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
-      Yaw: 0.18680840730667114
+      Yaw: 1.2468098402023315
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1798
+  Height: 2086
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000003640000066afc0200000004fb000000100044006900730070006c006100790073010000006e000003910000018200fffffffb0000000a00560069006500770073010000040b000002cd0000013200fffffffb0000000a0049006d0061006700650200000a16000004c4000001f7000000ebfb0000000a0049006d0061006700650200000a16000005ac000001f7000000eb000005ce0000066a00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000003640000078afc0200000004fb000000100044006900730070006c006100790073010000006e000004320000018200fffffffb0000000a0056006900650077007301000004ac0000034c0000013200fffffffb0000000a0049006d0061006700650200000a16000004c4000001f7000000ebfb0000000a0049006d0061006700650200000a16000005ac000001f7000000eb00000b900000078a00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 2366
-  X: 1231
-  Y: 162
+  Width: 3840
+  X: 0
+  Y: 0

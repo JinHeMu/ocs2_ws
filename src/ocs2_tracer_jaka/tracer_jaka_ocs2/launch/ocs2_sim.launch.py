@@ -321,6 +321,45 @@ def generate_launch_description():
         condition=IfCondition(use_joy),
     )
 
+    # 手柄控制底盘全身轨迹 (左摇杆前进/后退, 右摇杆转向)
+    # "胡萝卜" 模式: 目标 = 当前位置 + 速度 * lookahead_time
+    # 松开 LB: 底盘保持位置, 手臂→home (MPC 主动对抗重力)
+    joy_whole_body_node = Node(
+        package="tracer_jaka_ocs2",
+        executable="tracer_jaka_joy_whole_body_node",
+        name="tracer_jaka_joy_whole_body_node",
+        output="screen",
+        parameters=[
+            {
+                "robot_name": "mobile_manipulator",
+                "world_frame": "odom",
+                "publish_rate": 50.0,
+                "linear_speed_max": 0.4,       # 最大线速度 [m/s]
+                "angular_speed_max": 1.0,      # 最大角速度 [rad/s]
+                "deadzone": 0.10,
+                "lookahead_time": 1.5,          # 胡萝卜前视距离 [s]
+                "trajectory_horizon": 2.0,      # 轨迹总时长 [s]
+                "lead_time": 0.05,
+                "num_waypoints": 5,             # 航点数 (显式编码速度)
+                "state_dim": 9,
+                "input_dim": 8,
+                "base_dim": 3,
+                "arm_dim": 6,
+                "joy_topic": "/joy",
+                # 手柄映射
+                "axis_linear": 1,       # 左摇杆 Y → 前进/后退
+                "axis_angular": 3,      # 右摇杆 X → 转向
+                "button_deadman": 4,     # LB → 安全开关
+                "button_arm_home": 0,    # A → 臂归 home
+                "button_arm_hold": 1,    # B → 臂保持当前构型
+                # 机械臂 home 位姿
+                "arm_home": [-0.515, 1.5707, -1.5707, 1.5707, 1.5707, 0.254],
+                "use_sim_time": use_sim_time,
+            }
+        ],
+        condition=IfCondition(use_joy),
+    )
+
     # -------------------------------------------------------------------------
     # Step 4: RViz2
     # -------------------------------------------------------------------------
@@ -374,8 +413,9 @@ def generate_launch_description():
             mpc_node,
             mrt_node,
             #target_node,
-            #joy_driver,
+            joy_driver,
             #joy_target_node,
+            joy_whole_body_node,
         ],
     )
 
@@ -387,6 +427,6 @@ def generate_launch_description():
             ocs2_delayed,
             map_to_odom_tf,
             rviz_delayed,
-            whole_body_trajectory_node,
+            #whole_body_trajectory_node,
         ]
     )

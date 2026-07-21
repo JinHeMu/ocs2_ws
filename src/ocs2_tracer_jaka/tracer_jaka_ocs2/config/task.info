@@ -333,23 +333,38 @@ environmentCollision
       halfExtents { [0] 0.15  [1] 0.15  [2] 0.35 }
       minimumDistance 0.05
     }
-    ; 一个球和一个圆柱的示例 (默认注释掉, 需要时把 activate 内容打开即可仿写)
-    ; sphere_1
-    ; {
-    ;   type sphere
-    ;   position { [0] 1.80  [1] 1.05  [2] 0.40 }
-    ;   radius 0.15
-    ;   minimumDistance 0.05
-    ; }
-    ; cylinder_1
-    ; {
-    ;   type cylinder
-    ;   position    { [0] 2.00  [1] 0.30  [2] 0.30 }
-    ;   orientation { [0] 1.0 [1] 0.0 [2] 0.0 [3] 0.0 }
-    ;   radius 0.12
-    ;   height 0.60
-    ;   minimumDistance 0.05
-    ; }
+    cylinder_1
+    {
+      type cylinder
+      position    { [0] 1.50  [1] 0.80  [2] 0.30 }
+      orientation { [0] 1.0   [1] 0.0   [2] 0.0   [3] 0.0 }
+      radius 0.12
+      height  0.60
+      minimumDistance 0.05
+    }
+    sphere_1
+    {
+      type sphere
+      position    { [0] 2.00  [1] 1.00  [2] 0.25 }
+      radius 0.18
+      minimumDistance 0.05
+    }
+    box_3
+    {
+      type box
+      position    { [0] 0.50  [1] -1.20  [2] 0.20 }
+      orientation { [0] 1.0   [1] 0.0   [2] 0.0   [3] 0.0 }
+      halfExtents { [0] 0.35  [1] 0.12  [2] 0.20 }
+      minimumDistance 0.05
+    }
+    box_4
+    {
+      type box
+      position    { [0] 2.00  [1] -0.90  [2] 0.25 }
+      orientation { [0] 1.0   [1] 0.0   [2] 0.0   [3] 0.0 }
+      halfExtents { [0] 0.20  [1] 0.20  [2] 0.25 }
+      minimumDistance 0.05
+    }
   }
 }
 
