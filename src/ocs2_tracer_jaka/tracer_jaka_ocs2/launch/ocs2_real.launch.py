@@ -56,7 +56,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'task_file',
             default_value=PathJoinSubstitution(
-                [pkg_ocs2, 'config', 'task.info'])),
+                [pkg_ocs2, 'config', 'task_real.info'])),
         DeclareLaunchArgument(
             # 名字沿用你原来的 xacro_file，但现在默认指向 MuJoCo 包里的 .urdf
             "urdf_file",
@@ -165,7 +165,7 @@ def generate_launch_description():
             'base_cmd_topic':    '/cmd_vel',           # *** tracer_base 订这个 ***
             'odom_topic':        '/odom',              # *** tracer_base 发这个 ***
             'joint_state_topic': '/joint_states',
-            'arm_cmd_topic':     '/jaka_arm_controller/joint_trajectory',
+            'arm_cmd_topic':     '/jaka_forward_controller/commands',
             'arm_joint_names':   ['joint_1','joint_2','joint_3',
                                   'joint_4','joint_5','joint_6'],
             'base_frame':        'base_footprint',
@@ -204,16 +204,21 @@ def generate_launch_description():
 
     # 手柄驱动: 读 /dev/input/jsX, 出 /joy
     joy_driver = Node(
-        package='joy', executable='joy_node', name='joy_node',
-        parameters=[{
-            'device_id':         0,           # 对应 /dev/input/js0; 多手柄改 1,2...
-            'deadzone':          0.05,        # 驱动层死区
-            'autorepeat_rate':   20.0,        # 没事件时按这个 Hz 重发, 配合定时器更平滑
-            'use_sim_time':      False,       # 实机用 False; sim launch 里改成 use_sim_time
-        }],
+        package="joy",
+        executable="joy_node",
+        name="joy_node",
+        parameters=[
+            {
+                "device_id": 0,
+                "deadzone": 0.05,
+                "autorepeat_rate": 20.0,
+                "use_sim_time": False,
+            }
+        ],
         condition=IfCondition(use_joy),
-        output='screen',
+        output="screen",
     )
+
 
     # 手柄 -> OCS2 目标位姿节点
     joy_target_node = Node(
@@ -239,6 +244,58 @@ def generate_launch_description():
         condition=IfCondition(use_joy),
     )
 
+        # 手柄控制底盘全身轨迹 (左摇杆前进/后退, 右摇杆转向)
+    # "胡萝卜" 模式: 目标 = 当前位置 + 速度 * lookahead_time
+    # 松开 LB: 底盘保持位置, 手臂→home (MPC 主动对抗重力)
+    joy_whole_body_node = Node(
+        package="tracer_jaka_ocs2",
+        executable="tracer_jaka_joy_whole_body_node",
+        name="tracer_jaka_joy_whole_body_node",
+        output="screen",
+        parameters=[
+            {
+                "robot_name": "mobile_manipulator",
+                "world_frame": "odom",
+                "publish_rate": 50.0,
+                "linear_speed_max": 0.4,       # 最大线速度 [m/s]
+                "angular_speed_max": 1.0,      # 最大角速度 [rad/s]
+                "deadzone": 0.10,
+                "lookahead_time": 1.5,          # 胡萝卜前视距离 [s]
+                "trajectory_horizon": 2.0,      # 轨迹总时长 [s]
+                "lead_time": 0.05,
+                "num_waypoints": 5,             # 航点数 (显式编码速度)
+                "state_dim": 9,
+                "input_dim": 8,
+                "base_dim": 3,
+                "arm_dim": 6,
+                "joy_topic": "/joy",
+                # 手柄映射
+                "axis_linear": 1,       # 左摇杆 Y → 前进/后退
+                "axis_angular": 3,      # 右摇杆 X → 转向
+                "button_deadman": 4,     # LB → 安全开关
+                "button_arm_home": 0,    # A → 臂归 home
+                "button_arm_hold": 1,    # B → 臂保持当前构型
+                # 机械臂 home 位姿
+                "arm_home": [0.0, 1.5707,0.0, 1.5707, 3.14159, 0.785398],
+                "use_sim_time": False,
+            }
+        ],
+        condition=IfCondition(use_joy),
+    )
+
+    map_to_odom_tf = Node(
+    package="tf2_ros",
+    executable="static_transform_publisher",
+    name="map_to_odom_static_tf",
+    arguments=[
+        "-2", "0", "0",     # x y z
+        "0", "0", "0",     # yaw pitch roll
+        "map",
+        "odom",
+    ],
+    output="screen",
+    )
+
     # --------- 时序 ---------
     # 时序原则:
     #   t=0    : xacro, rsp, tracer_base, controller_manager 同时起
@@ -250,7 +307,7 @@ def generate_launch_description():
     spawn_delayed = TimerAction(period=2.0, actions=[spawn_jsb])
     ocs2_delayed = TimerAction(
         period=10.0,
-        actions=[mpc_node, mrt_node, target_node, joy_driver, joy_target_node])
+        actions=[mpc_node, mrt_node, joy_driver, joy_whole_body_node])
 
     return LaunchDescription(declare_args + [
         rsp,
@@ -258,7 +315,8 @@ def generate_launch_description():
         controller_manager,
         spawn_delayed,
         spawn_jtc_after_jsb,
-        rviz_delayed,
         ocs2_delayed,
+        map_to_odom_tf,
+        rviz_delayed,
     ])
 
