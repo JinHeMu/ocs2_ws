@@ -118,6 +118,10 @@ class TracerJakaMrtBridge : public rclcpp::Node {
     //              false -> 初始 target = 当前 EE 位姿 (7 维),      配合 EndEffectorConstraint
     declare_parameter<bool>("use_whole_body_target", true);
 
+    // ★ 安全闸: 单步臂关节最大允许变化 [rad]
+    //   MPC 无解时可能输出数值爆炸, 超过此阈值即触发安全停车
+    declare_parameter<double>("arm_max_delta_per_step", 0.50);
+
     // [可视化新增] 参数
     declare_parameter<bool>("enable_visualization", true);
     declare_parameter<bool>("viz_self_collision",   true);
@@ -134,6 +138,7 @@ class TracerJakaMrtBridge : public rclcpp::Node {
     eeFrame_        = get_parameter("ee_frame").as_string();
     useStampedCmd_  = get_parameter("use_stamped_cmd").as_bool();
     useWholeBodyTarget_ = get_parameter("use_whole_body_target").as_bool();
+    armMaxDeltaPerStep_ = get_parameter("arm_max_delta_per_step").as_double();
 
     enableViz_       = get_parameter("enable_visualization").as_bool();
     vizSelfCollision_= get_parameter("viz_self_collision").as_bool();
@@ -289,6 +294,10 @@ class TracerJakaMrtBridge : public rclcpp::Node {
     rclcpp::Rate rate(mrtRate_);
     const auto t0 = now();
 
+    // ---- 安全闸: plan 过期计数器 ----
+    int planExpiredCount = 0;
+    static constexpr int kPlanExpiredMaxLog = 5;
+
     // ---- 计时/频率统计 ----
     using clk = std::chrono::steady_clock;
     lastReport_ = now();
@@ -311,14 +320,86 @@ class TracerJakaMrtBridge : public rclcpp::Node {
       const bool policyUpdated = mrt_->updatePolicy();   // 是否拿到"新"策略
       if (policyUpdated) ++policyUpdateCount_;
 
-      // 当前时刻的 input 直接给底盘
-      ocs2::vector_t optState, optInput;
-      size_t mode;
-      mrt_->evaluatePolicy(obs.time, obs.state, optState, optInput, mode);
-      publishBaseCommand(optInput);
+      // ==================================================================
+      // ★ 安全闸: 检查 plan 是否过期
+      //   如果 currentTime > plan_end, MPC 没及时更新策略,
+      //   evaluatePolicy 会用到过期数据, 输出不可预测的控制量。
+      //   直接零指令, 跳过策略评估, 等待 MPC 恢复。
+      // ==================================================================
+      bool planValid = false;
+      try {
+        const auto& policy = mrt_->getPolicy();
+        if (!policy.timeTrajectory_.empty()) {
+          planValid = (obs.time <= policy.timeTrajectory_.back());
+        }
+      } catch (...) { planValid = false; }
 
-      // traj_horizon 之后的 state 给机械臂 (单点, 仅 position)
-      publishArmCommand(obs.time, obs.state);
+      if (planValid) {
+        planExpiredCount = 0;
+
+        // 当前时刻的 input 直接给底盘
+        ocs2::vector_t optState, optInput;
+        size_t mode;
+        mrt_->evaluatePolicy(obs.time, obs.state, optState, optInput, mode);
+
+        // ================================================================
+        // ★ 内容安全闸: 检查 MPC 输出的臂状态是否合理
+        //   MPC 在极限位姿无解时可能产生数值爆炸 (时间合法但内容非法),
+        //   此时 obs.time ≤ plan_end 所以时间闸不触发, 但臂会飞。
+        //   如果任意关节相对当前观测值跳变超过阈值 → 触发安全停车。
+        // ================================================================
+        bool contentSafe = true;
+        {
+          std::lock_guard<std::mutex> lk(stateMutex_);
+          for (size_t i = 0; i < armDim_; ++i) {
+            const double curQ = (i < armQ_.size()) ? armQ_[i] : 0.0;
+            const double delta = std::abs(optState(3 + i) - curQ);
+            if (delta > armMaxDeltaPerStep_) {
+              RCLCPP_ERROR(get_logger(),
+                           "[SAFETY] Arm content check FAILED! "
+                           "joint_%zu: mpc=%.3f obs=%.3f delta=%.3f > limit=%.3f",
+                           i + 1, optState(3 + i), curQ, delta, armMaxDeltaPerStep_);
+              contentSafe = false;
+              break;
+            }
+          }
+        }
+
+        if (contentSafe) {
+          publishBaseCommand(optInput);
+
+          // traj_horizon 之后的 state 给机械臂 (单点, 仅 position)
+          publishArmCommand(obs.time, obs.state);
+
+          // ★ 保存最后一次有效 MPC 输出的臂状态, 供安全闸 hold 时使用
+          lastGoodArmQ_.resize(armDim_);
+          for (size_t i = 0; i < armDim_; ++i)
+            lastGoodArmQ_[i] = optState(3 + i);
+        } else {
+          // 内容不安全 → 触发零指令 (和 plan 过期一样处理)
+          RCLCPP_ERROR(get_logger(),
+                       "[SAFETY] MPC arm output unsafe! Zeroing all control.");
+          publishZeroBaseCommand();
+          publishHoldArmCommand();
+        }
+      } else {
+        // ★ 时间安全闸: plan 过期 → 零指令
+        ++planExpiredCount;
+        if (planExpiredCount <= kPlanExpiredMaxLog) {
+          RCLCPP_ERROR(get_logger(),
+                       "[SAFETY] Plan time expired! currentTime=%.3f > planEnd=%.3f. "
+                       "Zeroing all control. (count=%d)",
+                       obs.time,
+                       mrt_->getPolicy().timeTrajectory_.back(),
+                       planExpiredCount);
+        } else if (planExpiredCount == kPlanExpiredMaxLog + 1) {
+          RCLCPP_ERROR(get_logger(),
+                       "[SAFETY] Plan still expired, suppressing further logs...");
+        }
+
+        publishZeroBaseCommand();
+        publishHoldArmCommand();
+      }
 
       // [可视化新增] 降频发布 marker
       if (viz_ && (++vizCounter_ % vizEveryN_ == 0)) {
@@ -509,12 +590,55 @@ class TracerJakaMrtBridge : public rclcpp::Node {
     arm_cmd_pub_->publish(traj);
   }
 
+  /// ★ 安全闸: 底盘零速度
+  void publishZeroBaseCommand() {
+    if (useStampedCmd_) {
+      geometry_msgs::msg::TwistStamped msg;
+      msg.header.stamp    = now();
+      msg.header.frame_id = baseFrame_;
+      msg.twist.linear.x  = 0.0;
+      msg.twist.angular.z = 0.0;
+      base_cmd_stamped_pub_->publish(msg);
+    } else {
+      geometry_msgs::msg::Twist msg;
+      msg.linear.x  = 0.0;
+      msg.angular.z = 0.0;
+      base_cmd_unstamped_pub_->publish(msg);
+    }
+  }
+
+  /// ★ 安全闸: 机械臂保持上次有效 MPC 输出的位置 (对抗重力, 不会下坠)
+  void publishHoldArmCommand() {
+    trajectory_msgs::msg::JointTrajectory traj;
+    traj.header.stamp = now();
+    traj.joint_names  = armJointNames_;
+
+    trajectory_msgs::msg::JointTrajectoryPoint pt;
+    pt.positions.resize(armJointNames_.size());
+    if (!lastGoodArmQ_.empty()) {
+      // 用上次 MPC 输出的有效臂状态, 而不是当前已下坠的关节角
+      for (size_t i = 0; i < armJointNames_.size() && i < lastGoodArmQ_.size(); ++i)
+        pt.positions[i] = lastGoodArmQ_[i];
+    } else {
+      // 冷启动: 还没有收到过有效 MPC 策略, 回退到 home
+      static const std::vector<double> kArmHome =
+          {-0.515, 1.5707, -1.5707, 1.5707, 1.5707, 0.254};
+      for (size_t i = 0; i < armJointNames_.size() && i < kArmHome.size(); ++i)
+        pt.positions[i] = kArmHome[i];
+    }
+    pt.time_from_start.sec  = 0;
+    pt.time_from_start.nanosec = 50000000;  // 50ms
+    traj.points.push_back(std::move(pt));
+    arm_cmd_pub_->publish(traj);
+  }
+
   // -------- members --------
   std::string taskFile_, libFolder_, urdfFile_;
   std::string baseFrame_, worldFrame_, eeFrame_;
   double mrtRate_{100.0}, trajHorizon_{0.05};
   bool   useStampedCmd_{true};
   bool   useWholeBodyTarget_{true};
+  double armMaxDeltaPerStep_{0.50};   // ★ 臂关节单步最大跳变 [rad]
   std::vector<std::string> armJointNames_;
 
   // [可视化新增]
@@ -553,6 +677,7 @@ class TracerJakaMrtBridge : public rclcpp::Node {
   std::atomic<bool> gotOdom_{false}, gotJs_{false};
   double baseX_{0.0}, baseY_{0.0}, baseYaw_{0.0};
   std::vector<double> armQ_;
+  std::vector<double> lastGoodArmQ_;   // ★ 安全闸: 最后一次有效 MPC 输出的臂位姿
 };
 
 int main(int argc, char** argv) {
