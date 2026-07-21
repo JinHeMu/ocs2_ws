@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /RobotModel1
+        - /RobotModel1/Status1
         - /Path1
         - /MarkerArray1
         - /MarkerArray1/Topic1
@@ -266,8 +267,6 @@ Visualization Manager:
           Value: true
         jk_se_vi_200_link:
           Value: true
-        map:
-          Value: true
         odom:
           Value: true
         rl_castor_link:
@@ -290,49 +289,48 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        map:
-          odom:
-            base_footprint:
-              base_link:
-                aluminium_2_base_link:
+        odom:
+          base_footprint:
+            base_link:
+              aluminium_2_base_link:
+                {}
+              aluminium_3_base_link:
+                {}
+              aluminium_4_base_link:
+                {}
+              aluminium_base_link:
+                {}
+              fl_castor_link:
+                fl_wheel_link:
                   {}
-                aluminium_3_base_link:
+              fr_castor_link:
+                fr_wheel_link:
                   {}
-                aluminium_4_base_link:
+              inertial_link:
+                {}
+              jaka_base_link:
+                Link_0:
+                  Link_1:
+                    Link_2:
+                      Link_3:
+                        Link_4:
+                          Link_5:
+                            Link_6:
+                              Link_6_45:
+                                jk_se_vi_200_link:
+                                  tool0_and_camera_link:
+                                    d435i_link:
+                                      {}
+                                    tool0:
+                                      {}
+              rl_castor_link:
+                rl_wheel_link:
                   {}
-                aluminium_base_link:
+              rr_castor_link:
+                rr_wheel_link:
                   {}
-                fl_castor_link:
-                  fl_wheel_link:
-                    {}
-                fr_castor_link:
-                  fr_wheel_link:
-                    {}
-                inertial_link:
-                  {}
-                jaka_base_link:
-                  Link_0:
-                    Link_1:
-                      Link_2:
-                        Link_3:
-                          Link_4:
-                            Link_5:
-                              Link_6:
-                                Link_6_45:
-                                  jk_se_vi_200_link:
-                                    tool0_and_camera_link:
-                                      d435i_link:
-                                        {}
-                                      tool0:
-                                        {}
-                rl_castor_link:
-                  rl_wheel_link:
-                    {}
-                rr_castor_link:
-                  rr_wheel_link:
-                    {}
-                urbase_base_link:
-                  {}
+              urbase_base_link:
+                {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -404,7 +402,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 154; 153; 150
-    Fixed Frame: map
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -425,7 +423,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 5.154728889465332
+      Distance: 2.642533779144287
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -440,10 +438,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4397973120212555
+      Pitch: 0.7947971820831299
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
-      Yaw: 1.9268168210983276
+      Yaw: 0.5418177843093872
     Saved: ~
 Window Geometry:
   Displays:

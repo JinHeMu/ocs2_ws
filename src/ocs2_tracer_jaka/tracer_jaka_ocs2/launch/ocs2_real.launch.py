@@ -127,7 +127,7 @@ def generate_launch_description():
     )
     spawn_jtc = Node(
         package='controller_manager', executable='spawner',
-        arguments=['jaka_arm_controller',
+        arguments=['jaka_forward_controller',
                    '--controller-manager', '/controller_manager'],
         output='screen',
     )
@@ -276,25 +276,16 @@ def generate_launch_description():
                 "button_arm_home": 0,    # A → 臂归 home
                 "button_arm_hold": 1,    # B → 臂保持当前构型
                 # 机械臂 home 位姿
-                "arm_home": [0.0, 1.5707,0.0, 1.5707, 3.14159, 0.785398],
+                "arm_home": [0.0, 1.5707,-1.57, 1.5707, 1.57, 0.785398],
                 "use_sim_time": False,
             }
         ],
         condition=IfCondition(use_joy),
     )
 
-    map_to_odom_tf = Node(
-    package="tf2_ros",
-    executable="static_transform_publisher",
-    name="map_to_odom_static_tf",
-    arguments=[
-        "-2", "0", "0",     # x y z
-        "0", "0", "0",     # yaw pitch roll
-        "map",
-        "odom",
-    ],
-    output="screen",
-    )
+    # arm_home": [0.0, 1.5707,0.0, 1.5707, 3.14159, 0.785398],
+
+
 
     # --------- 时序 ---------
     # 时序原则:
@@ -316,7 +307,6 @@ def generate_launch_description():
         spawn_delayed,
         spawn_jtc_after_jsb,
         ocs2_delayed,
-        map_to_odom_tf,
         rviz_delayed,
     ])
 

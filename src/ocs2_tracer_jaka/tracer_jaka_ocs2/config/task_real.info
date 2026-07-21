@@ -154,7 +154,7 @@ inputCost
       wheelBasedMobileManipulator
       {
         ; [问题1] 提高转向输入代价给底盘角速度加阻尼, 抑制末尾左右抖动
-        scaling 1e-1
+        scaling 1
         (0,0)  2.5   ; forward velocity
         (1,1)  10.0  ; turning velocity  (was 2.5)
       }
@@ -203,18 +203,18 @@ wholeBodyTracking
   {
     base
     {
-      (0,0)  5.0   ; x   [m]
-      (1,1)  5.0   ; y   [m]
-      (2,2)  2.0   ; yaw [rad]  [问题1] 0.5 -> 2.0, 优先对齐航向
+      (0,0)  1.0   ; x   [m]
+      (1,1)  1.0  ; y   [m]
+      (2,2)  0.5   ; yaw [rad]  [问题1] 0.5 -> 2.0, 优先对齐航向
     }
     arm
     {
-      (0,0)  2.0   ; joint_1
-      (1,1)  2.0   ; joint_2
-      (2,2)  2.0   ; joint_3
-      (3,3)  2.0   ; joint_4
-      (4,4)  2.0   ; joint_5
-      (5,5)  2.0   ; joint_6
+      (0,0)  1.0   ; joint_1
+      (1,1)  1.0   ; joint_2
+      (2,2)  1.0   ; joint_3
+      (3,3)  1.0   ; joint_4
+      (4,4)  1.0   ; joint_5
+      (5,5)  1.0   ; joint_6
     }
   }
 }
@@ -292,7 +292,7 @@ environmentCollision
 {
   activate            true
 
-  mu                  1e-2
+  mu                  1e-3
   delta               1e-3
   minimumDistance     0.05    ; 期望最小间隙 [m]
   activationDistance  0.20  ; 距离 < 此值才开始惩罚 [m] (缺省=5*minimumDistance)
@@ -320,9 +320,9 @@ environmentCollision
     box_1
     {
       type box
-      position    { [0] 0     [1] 1.6  [2] 0.30 }
+      position    { [0] 0.8   [1] -0.6 [2] 0.30 }
       orientation { [0] 1.0   [1] 0.0   [2] 0.0   [3] 0.0 }
-      halfExtents { [0] 0.15  [1] 0.15  [2] 0.30 }
+      halfExtents { [0] 0.2 [1] 0.2  [2] 0.25 }
       minimumDistance 0.05
     }
   }
@@ -358,18 +358,18 @@ jointVelocityLimits
       }
       wheelBasedMobileManipulator
       {
-        (0,0)  -0.5
-        (1,0)  -1.0
+        (0,0)  -0.1
+        (1,0)  -0.4
       }
     }
     arm
     {
-      (0,0)  -2.0
-      (1,0)  -2.0
-      (2,0)  -2.0
-      (3,0)  -2.0
-      (4,0)  -2.0
-      (5,0)  -2.0
+      (0,0)  -0.5
+      (1,0)  -0.5
+      (2,0)  -0.5
+      (3,0)  -0.5
+      (4,0)  -0.5
+      (5,0)  -0.5
     }
   }
 
@@ -390,18 +390,18 @@ jointVelocityLimits
       }
       wheelBasedMobileManipulator
       {
-        (0,0)  0.5
-        (1,0)  1.0
+        (0,0)  0.1
+        (1,0)  0.4
       }
     }
     arm
     {
-      (0,0)  2.0
-      (1,0)  2.0
-      (2,0)  2.0
-      (3,0)  2.0
-      (4,0)  2.0
-      (5,0)  2.0
+      (0,0)  0.5
+      (1,0)  0.5
+      (2,0)  0.5
+      (3,0)  0.5
+      (4,0)  0.5
+      (5,0)  0.5
     }
   }
 }
